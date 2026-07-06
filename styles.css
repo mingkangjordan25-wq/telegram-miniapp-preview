@@ -682,7 +682,8 @@ body {
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: rgba(32, 21, 15, 0.36);
+  background: rgba(32, 21, 15, 0.44);
+  z-index: 100;
 }
 
 .result-modal.is-open {
@@ -695,6 +696,8 @@ body {
   text-align: center;
   background: radial-gradient(circle at top center, rgba(255, 212, 77, 0.48), transparent 34%), #fffefb;
   box-shadow: 0 24px 54px rgba(32, 21, 15, 0.22);
+  position: relative;
+  z-index: 101;
 }
 
 .modal-list {
@@ -714,6 +717,33 @@ body {
 .modal-row span {
   font-size: 14px;
   line-height: 1.6;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 18px);
+  min-width: 168px;
+  max-width: calc(100vw - 48px);
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(32, 21, 15, 0.92);
+  color: #fff;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  box-shadow: 0 18px 42px rgba(32, 21, 15, 0.24);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 120;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 @media (min-width: 431px) {

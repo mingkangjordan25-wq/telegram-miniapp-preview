@@ -13,6 +13,7 @@ const modalEyebrow = document.getElementById("modalEyebrow");
 const resultTitle = document.getElementById("resultTitle");
 const resultBody = document.getElementById("resultBody");
 const closeModal = document.getElementById("closeModal");
+const toast = document.getElementById("toast");
 
 const rewardKeys = ["rm3", "extraSpin", "coin10", "freeShip", "rm5", "tryAgain", "rm10", "mystery"];
 
@@ -20,6 +21,7 @@ const state = {
   currentLanguage: "zh",
   spinning: false,
   currentRotation: 0,
+  toastTimer: null,
   user: {
     ucoin: 86,
     invited: 12,
@@ -423,6 +425,21 @@ function openModal(eyebrow, title, bodyHtml, ctaTarget = "share") {
   resultModal.classList.add("is-open");
 }
 
+function showToast(message) {
+  if (state.toastTimer) {
+    window.clearTimeout(state.toastTimer);
+  }
+
+  toast.textContent = message;
+  toast.classList.add("is-visible");
+  toast.setAttribute("aria-hidden", "false");
+
+  state.toastTimer = window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+    toast.setAttribute("aria-hidden", "true");
+  }, 1800);
+}
+
 function renderInviteList() {
   const root = document.getElementById("inviteList");
   root.innerHTML = inviteHistory
@@ -593,8 +610,7 @@ actionButtons.forEach((button) => {
       } catch {
         // Clipboard can fail in file:// preview mode. The demo still shows success feedback.
       }
-
-      openModal(t("navShare"), t("copyLink"), `<div class="modal-copy">${t("copySuccess")}</div>`, "share");
+      showToast(t("copySuccess"));
       return;
     }
 
