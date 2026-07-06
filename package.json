@@ -1,0 +1,13 @@
+{
+  "name": "telegram-miniapp-preview",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram Mini App preview for Share & Get FREE Spin",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
