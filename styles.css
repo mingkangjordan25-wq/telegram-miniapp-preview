@@ -31,6 +31,11 @@ body {
   padding: 0;
 }
 
+body.modal-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
 .app-shell {
   width: min(100%, 430px);
   height: 100vh;
@@ -692,12 +697,16 @@ body {
 
 .modal-card {
   width: min(100%, 360px);
+  max-height: min(78vh, 680px);
   padding: 22px;
   text-align: center;
   background: radial-gradient(circle at top center, rgba(255, 212, 77, 0.48), transparent 34%), #fffefb;
   box-shadow: 0 24px 54px rgba(32, 21, 15, 0.22);
   position: relative;
   z-index: 101;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .modal-list {
