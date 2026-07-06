@@ -22,6 +22,7 @@ const state = {
   spinning: false,
   currentRotation: 0,
   toastTimer: null,
+  lockedScrollY: 0,
   user: {
     ucoin: 86,
     invited: 12,
@@ -423,6 +424,9 @@ function openModal(eyebrow, title, bodyHtml, ctaTarget = "share") {
   resultBody.innerHTML = bodyHtml;
   resultModal.querySelector(".secondary-btn").dataset.target = ctaTarget;
   resultModal.classList.add("is-open");
+  state.lockedScrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.classList.add("modal-open");
+  document.body.style.top = `-${state.lockedScrollY}px`;
 }
 
 function showToast(message) {
@@ -675,11 +679,17 @@ languageSelect.addEventListener("change", () => {
 
 closeModal.addEventListener("click", () => {
   resultModal.classList.remove("is-open");
+  document.body.classList.remove("modal-open");
+  document.body.style.top = "";
+  window.scrollTo(0, state.lockedScrollY);
 });
 
 resultModal.addEventListener("click", (event) => {
   if (event.target === resultModal) {
     resultModal.classList.remove("is-open");
+    document.body.classList.remove("modal-open");
+    document.body.style.top = "";
+    window.scrollTo(0, state.lockedScrollY);
   }
 });
 
