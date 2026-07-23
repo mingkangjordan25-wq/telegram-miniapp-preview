@@ -1,6 +1,6 @@
 # Telegram Mini App Preview
 
-This folder is the deployable preview build for the `Share & Get FREE Spin` Telegram Mini App.
+This folder is the deployable preview build for the `Ultrawin77` Telegram Mini App.
 
 ## Files
 
@@ -34,11 +34,17 @@ npm start
 ```
 
 5. After deploy, Railway will give you an HTTPS URL.
-6. Use that HTTPS URL as the Telegram Mini App web app URL later.
+6. Add the Railway HTTPS URL to the main bot Railway Variables:
+
+```text
+MINI_APP_URL=https://your-mini-app.up.railway.app
+```
+
+7. Restart the main bot deployment so the Mini App button appears.
 
 ## Current status
 
-This is a front-end preview only.
+This is a front-end preview with Telegram WebApp shell support, weighted spin animation, and bot deeplink sharing.
 
 Not connected yet:
 

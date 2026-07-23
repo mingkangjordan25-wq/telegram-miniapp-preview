@@ -1,22 +1,23 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Share & Get FREE Spin</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Ultrawin77 Reward Center</title>
+  <link rel="stylesheet" href="styles.css?v=uw-bot-miniapp-1">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
       <div>
         <p class="eyebrow" data-i18n="topbarEyebrow">Telegram Mini App</p>
-        <h1 data-i18n="topbarTitle">Share & Get FREE Spin</h1>
+        <h1 data-i18n="topbarTitle">Ultrawin77 Reward Center</h1>
       </div>
       <select class="lang-select" id="languageSelect" aria-label="Language">
-        <option value="zh">🇨🇳 中文</option>
-        <option value="en">🇬🇧 English</option>
-        <option value="ms">🇲🇾 Bahasa</option>
+        <option value="en">English</option>
+        <option value="ms">Bahasa Melayu</option>
+        <option value="zh">中文</option>
       </select>
     </header>
 
@@ -24,73 +25,100 @@
       <section class="screen is-active" data-screen="home">
         <div class="hero-card compact-hero">
           <div class="hero-copy">
-            <span class="hero-chip" data-i18n="homeChip">邀请好友赢奖励</span>
-            <h2 data-i18n="homeHeroTitle">邀请好友验证马来西亚手机号，立即拿 FREE Spin</h2>
-            <p data-i18n="homeHeroDesc">每有 1 位好友完成马来西亚手机号验证，你就获得 1 次免费转盘机会。</p>
+            <span class="hero-chip" data-i18n="homeChip">UW rewards and referrals</span>
+            <h2 data-i18n="homeHeroTitle">Check in daily, invite verified friends, and grow your UCoin balance</h2>
+            <p data-i18n="homeHeroDesc">This preview mirrors the UW reward flow: daily check-in, member tiers, referral tracking, and UltraMall redemption.</p>
           </div>
           <div class="hero-orb"></div>
         </div>
 
+        <section class="panel spin-panel">
+          <div class="panel-head">
+            <h3 data-i18n="homeSpinTitle">Lucky Spin</h3>
+            <span id="spinCountHome">2 spins left</span>
+          </div>
+          <p class="subtle" data-i18n="homeSpinDesc">Verified referrals can unlock more spin chances.</p>
+
+          <div class="home-wheel-zone" id="homeWheelZone">
+            <div class="wheel-pointer"></div>
+            <div class="wheel" id="homeWheel">
+              <span class="wheel-label" data-spin-label="0">Try Again</span>
+              <span class="wheel-label" data-spin-label="1">Free Spin</span>
+              <span class="wheel-label" data-spin-label="2">+5 UCoin</span>
+              <span class="wheel-label" data-spin-label="3">+10 UCoin</span>
+              <span class="wheel-label" data-spin-label="4">RM5</span>
+              <span class="wheel-label" data-spin-label="5">RM12</span>
+              <span class="wheel-label" data-spin-label="6">RM25</span>
+            </div>
+            <button class="spin-core" id="homeSpinButton" type="button" data-action="spin-now" data-i18n="spinCore">SPIN</button>
+          </div>
+
+          <div class="spin-footer">
+            <span data-i18n="spinHint">Tap the center button to spin.</span>
+            <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
+          </div>
+        </section>
+
         <div class="stats-grid home-stats">
           <article class="stat-card accent">
-            <span data-i18n="statFreeSpins">免费次数</span>
-            <strong id="spinCountHome">2</strong>
-          </article>
-          <article class="stat-card">
             <span data-i18n="statUCoin">UCoin</span>
-            <strong id="ucoinHome">86</strong>
+            <strong id="ucoinHome">128</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statInvited">邀请人数</span>
-            <strong id="invitedHome">12</strong>
+            <span data-i18n="statTier">Tier</span>
+            <strong id="tierHome">Silver</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statVerified">已验证</span>
-            <strong id="verifiedHome">4</strong>
+            <span data-i18n="statInvited">Invited</span>
+            <strong id="invitedHome">26</strong>
+          </article>
+          <article class="stat-card">
+            <span data-i18n="statVerified">Verified</span>
+            <strong id="verifiedHome">18</strong>
           </article>
         </div>
 
         <div class="cta-row">
-          <button class="primary-btn" type="button" data-target="share" data-i18n="shareNow">立即分享</button>
-          <button class="secondary-btn" type="button" data-target="spin" data-i18n="spinNow">立即抽奖</button>
+          <button class="primary-btn" type="button" data-action="spin-now" data-i18n="spinNow">Spin Now</button>
+          <button class="secondary-btn" type="button" data-target="share" data-i18n="inviteFriends">Invite Friends</button>
         </div>
 
         <section class="panel quick-panel">
           <div class="panel-head">
-            <h3 data-i18n="quickActionsTitle">快捷功能</h3>
-            <span data-i18n="quickActionsHint">常用入口</span>
+            <h3 data-i18n="quickActionsTitle">Quick Actions</h3>
+            <span data-i18n="quickActionsHint">Most used shortcuts</span>
           </div>
           <div class="quick-grid">
             <button class="quick-card" type="button" data-action="daily-checkin">
-              <strong data-i18n="quickCheckin">每日签到</strong>
-              <span id="checkinStatus" data-i18n="checkinReady">今天可领取</span>
-            </button>
-            <button class="quick-card" type="button" data-action="phone-verification">
-              <strong data-i18n="quickVerify">手机号验证</strong>
-              <span id="phoneStatusText" data-i18n="phoneStatusVerified">已验证</span>
+              <strong data-i18n="quickCheckin">Daily Check-In</strong>
+              <span id="checkinStatus" data-i18n="checkinReady">Ready now</span>
             </button>
             <button class="quick-card" type="button" data-target="share">
-              <strong data-i18n="quickInvite">邀请好友</strong>
-              <span id="inviteDigest">4 已验证</span>
+              <strong data-i18n="quickInvite">Invite Friend</strong>
+              <span id="inviteDigest">18 verified</span>
             </button>
             <button class="quick-card" type="button" data-target="mall">
               <strong data-i18n="quickMall">UltraMall</strong>
-              <span data-i18n="quickMallDesc">用 UCoin 兑换</span>
+              <span data-i18n="quickMallDesc">Redeem UCoin rewards</span>
+            </button>
+            <button class="quick-card" type="button" data-action="worldcup-info">
+              <strong data-i18n="quickWorldCup">World Cup Guess</strong>
+              <span data-i18n="quickWorldCupDesc">Linked from main bot</span>
             </button>
           </div>
         </section>
 
         <section class="panel digest-panel">
           <div class="panel-head">
-            <h3 data-i18n="memberTierTitle">会员等级</h3>
-            <span id="tierBadge">Bronze x1</span>
+            <h3 data-i18n="memberTierTitle">Member Tier</h3>
+            <span id="tierBadge">Silver x2</span>
           </div>
           <div class="tier-summary">
             <div>
-              <p class="tier-value" id="tierName">Bronze</p>
-              <p class="tier-note" id="tierProgressText">再成功邀请 8 人升级到 Silver</p>
+              <p class="tier-value" id="tierName">Silver</p>
+              <p class="tier-note" id="tierProgressText">24 more verified invites to Gold</p>
             </div>
-            <div class="tier-chip" id="tierMultiplier">x1</div>
+            <div class="tier-chip" id="tierMultiplier">x2</div>
           </div>
           <div class="tier-bar">
             <div class="tier-fill" id="tierFill"></div>
@@ -98,81 +126,97 @@
         </section>
       </section>
 
-      <section class="screen" data-screen="spin">
+      <section class="screen" data-screen="checkin">
         <section class="panel hero-panel compact">
           <div class="panel-head">
-            <h3 data-i18n="spinPageTitle">幸运转盘</h3>
-            <span id="spinCountSpin">2 次机会</span>
+            <h3 data-i18n="checkinPageTitle">Daily Check-In</h3>
+            <span id="tierSummaryCheckin">Silver x2</span>
           </div>
-          <p class="subtle" data-i18n="spinPageDesc">邀请更多好友完成验证，获得更多抽奖机会。</p>
+          <p class="subtle" data-i18n="checkinPageDesc">Your member tier changes how many UCoin you receive each day.</p>
         </section>
 
-        <section class="wheel-zone">
-          <div class="wheel-pointer"></div>
-          <div class="wheel" id="wheel">
-            <div class="wheel-label">RM3</div>
-            <div class="wheel-label">Extra</div>
-            <div class="wheel-label">10 Coin</div>
-            <div class="wheel-label">Ship</div>
-            <div class="wheel-label">RM5</div>
-            <div class="wheel-label">Again</div>
-            <div class="wheel-label">RM10</div>
-            <div class="wheel-label">Mystery</div>
+        <section class="panel">
+          <div class="panel-head">
+            <h3 data-i18n="todayRewardTitle">Today's Reward</h3>
+            <span id="checkinPoints">+2 UCoin</span>
           </div>
-          <button class="spin-core" id="spinButton" type="button" data-i18n="spinCore">开始</button>
+          <p class="subtle" id="checkinHint" data-i18n="checkinHint">Check in once per day to collect your current tier reward.</p>
+          <div class="cta-row">
+            <button class="primary-btn" id="checkinButton" type="button" data-action="daily-checkin" data-i18n="claimCheckin">Claim Check-In</button>
+            <button class="secondary-btn" type="button" data-action="tier-info" data-i18n="viewTierRules">View Tier Rules</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h3 data-i18n="streakTitle">Check-In Snapshot</h3>
+            <span id="lastCheckinLabel">2026-07-08</span>
+          </div>
+          <div class="summary-list">
+            <div class="summary-row">
+              <strong data-i18n="summaryLastCheckin">Last check-in</strong>
+              <span id="lastCheckinValue">2026-07-08</span>
+            </div>
+            <div class="summary-row">
+              <strong data-i18n="summaryTierMultiplier">Tier multiplier</strong>
+              <span id="tierMultiplierSummary">x2</span>
+            </div>
+            <div class="summary-row">
+              <strong data-i18n="summaryVerifiedFriends">Verified friends</strong>
+              <span id="verifiedSummary">18</span>
+            </div>
+          </div>
         </section>
 
         <section class="panel mini-bottom-panel">
           <div class="panel-head">
-            <h3 data-i18n="rewardPoolTitle">奖励池</h3>
-            <button class="text-link" type="button" data-action="spin-history" data-i18n="viewHistory">查看记录</button>
+            <h3 data-i18n="rewardPoolTitle">Tier Benefits</h3>
+            <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
           </div>
           <div class="reward-grid compact-rewards">
-            <span>RM3</span>
-            <span>RM5</span>
-            <span>RM10</span>
-            <span>Coin</span>
-            <span>Ship</span>
-            <span>Extra</span>
+            <span data-i18n="benefitBronze">Bronze +1</span>
+            <span data-i18n="benefitSilver">Silver +2</span>
+            <span data-i18n="benefitGold">Gold +3</span>
+            <span data-i18n="benefitInvite">Verified referrals</span>
           </div>
         </section>
       </section>
 
       <section class="screen" data-screen="share">
         <section class="invite-card compact-card">
-          <p class="eyebrow" data-i18n="referralEyebrow">你的邀请卡</p>
-          <h3 data-i18n="sharePageTitle">邀请好友，赚更多 FREE Spin</h3>
-          <div class="ref-code">MYSPIN-2486</div>
-          <p class="ref-link" id="refLinkText">t.me/UltrawinGroup_bot?startapp=ref_MYSPIN2486</p>
+          <p class="eyebrow" data-i18n="referralEyebrow">Your referral pass</p>
+          <h3 data-i18n="sharePageTitle">Invite verified friends and earn more UCoin</h3>
+          <div class="ref-code" id="refCodeText">UW77-2486</div>
+          <p class="ref-link" id="refLinkText">https://t.me/UltrawinGroup_bot?start=ref_UW772486</p>
           <div class="cta-row">
-            <button class="primary-btn" type="button" data-action="share-telegram" data-i18n="shareTelegram">分享到 Telegram</button>
-            <button class="secondary-btn" type="button" data-action="copy-link" data-i18n="copyLink">复制链接</button>
+            <button class="primary-btn" type="button" data-action="share-telegram" data-i18n="shareTelegram">Share on Telegram</button>
+            <button class="secondary-btn" type="button" data-action="copy-link" data-i18n="copyLink">Copy Link</button>
           </div>
         </section>
 
         <div class="stats-grid share-grid">
           <article class="stat-card accent">
-            <span data-i18n="statShared">已分享</span>
-            <strong id="sharedCount">12</strong>
+            <span data-i18n="statShared">Shared</span>
+            <strong id="sharedCount">26</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statJoined">已加入</span>
-            <strong id="joinedCount">7</strong>
+            <span data-i18n="statJoined">Joined</span>
+            <strong id="joinedCount">21</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statVerified">已验证</span>
-            <strong id="verifiedCount">4</strong>
+            <span data-i18n="statVerified">Verified</span>
+            <strong id="verifiedCount">18</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statSpinsEarned">已得次数</span>
-            <strong id="spinsEarnedCount">4</strong>
+            <span data-i18n="statRewardsEarned">UCoin Earned</span>
+            <strong id="rewardsEarnedCount">46</strong>
           </article>
         </div>
 
         <section class="panel compact-list-panel">
           <div class="panel-head">
-            <h3 data-i18n="inviteHistoryTitle">邀请记录</h3>
-            <button class="text-link" type="button" data-action="invite-history" data-i18n="viewAll">查看全部</button>
+            <h3 data-i18n="inviteHistoryTitle">Invite History</h3>
+            <button class="text-link" type="button" data-action="invite-history" data-i18n="viewAll">View all</button>
           </div>
           <div class="invite-list compact-list" id="inviteList"></div>
         </section>
@@ -181,12 +225,12 @@
       <section class="screen" data-screen="mall">
         <section class="wallet-card compact-card">
           <div>
-            <p class="eyebrow" data-i18n="walletEyebrow">奖励钱包</p>
-            <h3 data-i18n="mallPageTitle">UltraMall 福利</h3>
+            <p class="eyebrow" data-i18n="walletEyebrow">Reward wallet</p>
+            <h3 data-i18n="mallPageTitle">UltraMall Benefits</h3>
           </div>
           <div class="wallet-badges">
-            <span id="walletUcoin">UCoin 86</span>
-            <span>RM8 Voucher</span>
+            <span id="walletUcoin">UCoin 128</span>
+            <span data-i18n="mallBadge">Claim ready</span>
           </div>
         </section>
 
@@ -199,22 +243,22 @@
           <div class="product-grid mall-grid">
             <article class="product-card">
               <h4>RM5 Credit</h4>
-              <p>30 UCoin</p>
+              <p data-i18n="mallCreditFive">Redeem with 30 UCoin</p>
               <strong>30</strong>
             </article>
             <article class="product-card">
               <h4>RM12 Credit</h4>
-              <p>70 UCoin</p>
+              <p data-i18n="mallCreditTwelve">Redeem with 70 UCoin</p>
               <strong>70</strong>
             </article>
             <article class="product-card">
               <h4>RM25 Credit</h4>
-              <p>150 UCoin</p>
+              <p data-i18n="mallCreditTwentyFive">Redeem with 150 UCoin</p>
               <strong>150</strong>
             </article>
             <article class="product-card">
               <h4>RM50 Credit</h4>
-              <p>300 UCoin</p>
+              <p data-i18n="mallCreditFifty">Redeem with 300 UCoin</p>
               <strong>300</strong>
             </article>
           </div>
@@ -222,10 +266,10 @@
 
         <section class="panel mall-tab" data-mall-panel="gift">
           <div class="offer-list compact-list">
-            <article><strong>Power Bank</strong><p>1000 UCoin</p></article>
-            <article><strong>Earbuds</strong><p>2500 UCoin</p></article>
-            <article><strong>Smart Watch</strong><p>8000 UCoin</p></article>
-            <article><strong>iPhone 17 Pro Max</strong><p>15000 UCoin</p></article>
+            <article><strong data-i18n="giftPowerBank">Power Bank</strong><p>1000 UCoin</p></article>
+            <article><strong data-i18n="giftEarbuds">Earbuds</strong><p>2500 UCoin</p></article>
+            <article><strong data-i18n="giftSmartWatch">Smart Watch</strong><p>8000 UCoin</p></article>
+            <article><strong data-i18n="giftIPhone">iPhone 17 Pro Max</strong><p>15000 UCoin</p></article>
           </div>
         </section>
       </section>
@@ -233,80 +277,80 @@
       <section class="screen" data-screen="account">
         <section class="profile-card compact-card">
           <div class="avatar-ring">
-            <div class="avatar-core">A</div>
+            <div class="avatar-core" id="avatarCore">U</div>
           </div>
           <div>
-            <p class="eyebrow" data-i18n="accountEyebrow">Telegram 用户</p>
-            <h3>@alex_ultra</h3>
-            <span class="tag success wide" id="phoneVerifiedTag" data-i18n="phoneVerified">手机号已验证</span>
+            <p class="eyebrow" data-i18n="accountEyebrow">Telegram user</p>
+            <h3 id="accountUsername">@uw_member_demo</h3>
+            <span class="tag success wide" id="phoneVerifiedTag" data-i18n="phoneVerified">Malaysia number verified</span>
           </div>
         </section>
 
         <div class="stats-grid share-grid">
           <article class="stat-card accent">
             <span data-i18n="statUCoin">UCoin</span>
-            <strong id="ucoinAccount">86</strong>
+            <strong id="ucoinAccount">128</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="accountTier">当前等级</span>
-            <strong id="accountTierShort">Bronze</strong>
+            <span data-i18n="accountTier">Current Tier</span>
+            <strong id="accountTierShort">Silver</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statTotalInvites">总邀请数</span>
-            <strong id="totalInvitesAccount">12</strong>
+            <span data-i18n="statTotalInvites">Total Invites</span>
+            <strong id="totalInvitesAccount">26</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="accountLastCheckin">上次签到</span>
-            <strong id="lastCheckinShort">07-06</strong>
+            <span data-i18n="accountLastCheckin">Last Check-In</span>
+            <strong id="lastCheckinShort">07-08</strong>
           </article>
         </div>
 
         <section class="panel menu-panel compact-menu">
-          <button type="button" data-action="invite-history" data-i18n="menuInviteHistory">邀请记录</button>
-          <button type="button" data-action="spin-history" data-i18n="menuSpinHistory">抽奖记录</button>
-          <button type="button" data-action="reward-history" data-i18n="menuRewardHistory">奖励记录</button>
-          <button type="button" data-action="phone-verification" data-i18n="menuPhoneVerification">手机号验证</button>
-          <button type="button" data-action="terms" data-i18n="menuTerms">条款规则</button>
-          <button type="button" data-action="help" data-i18n="menuHelp">帮助中心</button>
+          <button type="button" data-action="invite-history" data-i18n="menuInviteHistory">Invite History</button>
+          <button type="button" data-action="reward-history" data-i18n="menuRewardHistory">Reward History</button>
+          <button type="button" data-action="phone-verification" data-i18n="menuPhoneVerification">Phone Verification</button>
+          <button type="button" data-action="terms" data-i18n="menuTerms">Terms & Rules</button>
+          <button type="button" data-action="help" data-i18n="menuHelp">Help Center</button>
+          <button type="button" data-action="worldcup-info" data-i18n="menuWorldCup">World Cup Guess</button>
         </section>
       </section>
     </main>
 
     <nav class="bottom-nav">
       <button class="nav-item is-active" type="button" data-target="home">
-        <span data-i18n="navHome">首页</span>
+        <span data-i18n="navHome">Home</span>
       </button>
-      <button class="nav-item" type="button" data-target="spin">
-        <span data-i18n="navSpin">转盘</span>
+      <button class="nav-item" type="button" data-target="checkin">
+        <span data-i18n="navCheckin">Check-In</span>
       </button>
       <button class="nav-item" type="button" data-target="share">
-        <span data-i18n="navShare">分享</span>
+        <span data-i18n="navShare">Share</span>
       </button>
       <button class="nav-item" type="button" data-target="mall">
-        <span data-i18n="navMall">商城</span>
+        <span data-i18n="navMall">Mall</span>
       </button>
       <button class="nav-item" type="button" data-target="account">
-        <span data-i18n="navAccount">账户</span>
+        <span data-i18n="navAccount">Account</span>
       </button>
     </nav>
   </div>
 
   <div class="result-modal" id="resultModal" aria-hidden="true">
     <div class="modal-card">
-      <p class="eyebrow" id="modalEyebrow" data-i18n="spinResultEyebrow">抽奖结果</p>
-      <h3 id="resultTitle">恭喜你！</h3>
+      <p class="eyebrow" id="modalEyebrow" data-i18n="modalEyebrow">UW Preview</p>
+      <h3 id="resultTitle">Preview message</h3>
       <div id="resultBody">
-        <p id="resultText">你获得了 RM5 Voucher</p>
+        <p id="resultText">This content changes based on your action.</p>
       </div>
       <div class="cta-row">
-        <button class="primary-btn" id="closeModal" type="button" data-i18n="nice">知道了</button>
-        <button class="secondary-btn" type="button" data-target="share" data-i18n="getMoreSpins">去赚更多机会</button>
+        <button class="primary-btn" id="closeModal" type="button" data-i18n="close">Close</button>
+        <button class="secondary-btn" type="button" data-target="share" data-i18n="goShare">Go Share</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" aria-live="polite" aria-hidden="true"></div>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=uw-bot-miniapp-1"></script>
 </body>
 </html>

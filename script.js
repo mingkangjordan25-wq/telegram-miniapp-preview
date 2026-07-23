@@ -1,364 +1,439 @@
 const screens = [...document.querySelectorAll(".screen")];
 const navItems = [...document.querySelectorAll(".nav-item")];
 const quickLinks = [...document.querySelectorAll("[data-target]")];
-const actionButtons = [...document.querySelectorAll("[data-action]")];
+let actionButtons = [...document.querySelectorAll("[data-action]")];
 const mallTabs = [...document.querySelectorAll("[data-mall-tab]")];
 const mallPanels = [...document.querySelectorAll("[data-mall-panel]")];
 
 const languageSelect = document.getElementById("languageSelect");
-const spinButton = document.getElementById("spinButton");
-const wheel = document.getElementById("wheel");
 const resultModal = document.getElementById("resultModal");
 const modalEyebrow = document.getElementById("modalEyebrow");
 const resultTitle = document.getElementById("resultTitle");
 const resultBody = document.getElementById("resultBody");
 const closeModal = document.getElementById("closeModal");
 const toast = document.getElementById("toast");
+let homeWheel = document.getElementById("homeWheel");
+let homeWheelZone = document.getElementById("homeWheelZone");
+const tg = window.Telegram?.WebApp || null;
 
-const rewardKeys = ["rm3", "extraSpin", "coin10", "freeShip", "rm5", "tryAgain", "rm10", "mystery"];
+const appConfig = {
+  botUsername: "UltrawinGroup_bot",
+  websiteUrl: "https://ultrawin77.com/my",
+  supportTelegram: "@Ultrawin77vvip",
+  supportWhatsApp: "+60 17-801 1570",
+  ultraMallUrl: "https://ultra-mall.atoms.world/",
+};
 
 const state = {
-  currentLanguage: "zh",
+  currentLanguage: languageSelect?.value || "en",
   spinning: false,
   currentRotation: 0,
   toastTimer: null,
   lockedScrollY: 0,
   user: {
-    ucoin: 86,
-    invited: 12,
-    verified: 4,
-    joined: 7,
-    spinsEarned: 4,
+    telegramId: null,
+    displayName: "@uw_member_demo",
+    firstName: "UW",
+    ucoin: 128,
     spinCount: 2,
-    lastCheckin: "2026-07-06",
+    invited: 26,
+    verified: 18,
+    joined: 21,
+    rewardsEarned: 46,
+    lastCheckin: "2026-07-08",
     canCheckin: true,
     phone: "+60 12-883 7711",
     phoneVerified: true,
-    phoneVerifiedAt: "2026-07-06 18:42",
+    phoneVerifiedAt: "2026-07-08 20:00",
   },
 };
 
 const inviteHistory = [
-  { name: "Amir", time: "2026-07-07 14:02", status: "verified" },
-  { name: "Siti", time: "2026-07-07 12:48", status: "pending" },
-  { name: "Jason", time: "2026-07-06 20:15", status: "verified" },
-  { name: "Hana", time: "2026-07-06 18:11", status: "rewardSent" },
-];
-
-const spinHistory = [
-  { rewardKey: "rm5", time: "2026-07-07 10:45" },
-  { rewardKey: "coin10", time: "2026-07-06 21:10" },
-  { rewardKey: "extraSpin", time: "2026-07-05 19:08" },
+  { name: "Aina", time: "2026-07-09 10:12", status: "verified" },
+  { name: "Jason", time: "2026-07-09 09:04", status: "verified" },
+  { name: "Siti", time: "2026-07-08 22:40", status: "pending" },
+  { name: "Amir", time: "2026-07-08 18:15", status: "rewardSent" },
 ];
 
 const rewardHistory = [
-  { item: "Bonus Credit RM5", points: 30, time: "2026-07-06 13:20", status: "approved" },
-  { item: "Bonus Credit RM12", points: 70, time: "2026-07-05 11:02", status: "pending" },
+  { item: "Daily Check-In", amount: "+2 UCoin", time: "2026-07-08 20:00", status: "approved" },
+  { item: "Referral Reward", amount: "+5 UCoin", time: "2026-07-08 14:28", status: "approved" },
+  { item: "UltraMall RM5 Credit", amount: "-30 UCoin", time: "2026-07-07 17:05", status: "pending" },
+];
+
+const spinRewards = [
+  { label: "Try Again", shortLabel: "Try Again", type: "empty", weight: 43 },
+  { label: "free Spin again", shortLabel: "Free Spin", type: "spin", value: 1, weight: 15 },
+  { label: "+5 UCoin", shortLabel: "+5 UCoin", type: "ucoin", value: 5, weight: 22 },
+  { label: "+10 UCoin", shortLabel: "+10 UCoin", type: "ucoin", value: 10, weight: 12 },
+  { label: "RM5 Credit", shortLabel: "RM5", type: "reward", weight: 6 },
+  { label: "RM12 Credit", shortLabel: "RM12", type: "reward", weight: 1.5 },
+  { label: "RM25 Credit", shortLabel: "RM25", type: "reward", weight: 0.5 },
 ];
 
 const translations = {
-  zh: {
-    topbarEyebrow: "Telegram Mini App",
-    topbarTitle: "Share & Get FREE Spin",
-    homeChip: "邀请好友赢奖励",
-    homeHeroTitle: "邀请好友验证马来西亚手机号，立即拿 FREE Spin",
-    homeHeroDesc: "每有 1 位好友完成马来西亚手机号验证，你就获得 1 次免费转盘机会。",
-    statFreeSpins: "免费次数",
-    statUCoin: "UCoin",
-    statInvited: "邀请人数",
-    statVerified: "已验证",
-    shareNow: "立即分享",
-    spinNow: "立即抽奖",
-    quickActionsTitle: "快捷功能",
-    quickActionsHint: "常用入口",
-    quickCheckin: "每日签到",
-    checkinReady: "今天可领取",
-    quickVerify: "手机号验证",
-    phoneStatusVerified: "已验证",
-    phoneStatusPending: "未验证",
-    quickInvite: "邀请好友",
-    quickMall: "UltraMall",
-    quickMallDesc: "用 UCoin 兑换",
-    memberTierTitle: "会员等级",
-    spinPageTitle: "幸运转盘",
-    spinPageDesc: "邀请更多好友完成验证，获得更多抽奖机会。",
-    spinCore: "开始",
-    rewardPoolTitle: "奖励池",
-    viewHistory: "查看记录",
-    referralEyebrow: "你的邀请卡",
-    sharePageTitle: "邀请好友，赚更多 FREE Spin",
-    shareTelegram: "分享到 Telegram",
-    copyLink: "复制链接",
-    statShared: "已分享",
-    statJoined: "已加入",
-    statSpinsEarned: "已得次数",
-    inviteHistoryTitle: "邀请记录",
-    viewAll: "查看全部",
-    walletEyebrow: "奖励钱包",
-    mallPageTitle: "UltraMall 福利",
-    mallCreditTab: "Credit",
-    mallGiftTab: "Gift",
-    accountEyebrow: "Telegram 用户",
-    phoneVerified: "手机号已验证",
-    accountTier: "当前等级",
-    statTotalInvites: "总邀请数",
-    accountLastCheckin: "上次签到",
-    menuInviteHistory: "邀请记录",
-    menuSpinHistory: "抽奖记录",
-    menuRewardHistory: "奖励记录",
-    menuPhoneVerification: "手机号验证",
-    menuTerms: "条款规则",
-    menuHelp: "帮助中心",
-    navHome: "首页",
-    navSpin: "转盘",
-    navShare: "分享",
-    navMall: "商城",
-    navAccount: "账户",
-    spinResultEyebrow: "抽奖结果",
-    nice: "知道了",
-    getMoreSpins: "去赚更多机会",
-    verified: "已验证",
-    pending: "待完成",
-    rewardSent: "已发奖励",
-    approved: "已通过",
-    resultNoSpinsTitle: "没有次数了",
-    resultNoSpinsText: "邀请更多好友并完成验证，就能继续抽奖。",
-    resultTryAgainTitle: "差一点点",
-    resultTryAgainText: "这次没有中奖，再邀请好友拿更多机会。",
-    resultWinTitle: "恭喜你！",
-    resultWinText: "你获得了 {reward}",
-    spinsAvailable: "{count} 次机会",
-    tierBronze: "Bronze",
-    tierSilver: "Silver",
-    tierGold: "Gold",
-    tierNextBronze: "再成功邀请 {count} 人升级到 Silver",
-    tierNextSilver: "再成功邀请 {count} 人升级到 Gold",
-    tierNextGold: "你已是最高等级 Gold",
-    modalCheckinTitle: "每日签到成功",
-    modalCheckinText: "今天签到已领取 +{points} UCoin。",
-    modalInviteTitle: "邀请记录",
-    modalSpinHistoryTitle: "抽奖记录",
-    modalRewardHistoryTitle: "奖励记录",
-    modalPhoneTitle: "手机号验证",
-    modalTermsTitle: "条款规则",
-    modalHelpTitle: "帮助中心",
-    termsText: "1. 好友完成马来西亚手机号验证后，推荐人才会获得活动奖励。\n2. 同一个号码只计算一次有效验证。\n3. UCoin 与奖励可能需要审核。",
-    helpText: "Telegram Support: @Ultrawin77vvip\nWhatsApp: +60 17-801 1570\nWebsite: ultrawin77.com/my",
-    copySuccess: "邀请链接已复制",
-    shareSoon: "这里之后会接 Telegram 原生分享。",
-    phoneVerifiedLine: "手机号：{phone}",
-    phoneVerifiedTime: "验证时间：{time}",
-    phoneVerifyAction: "当前账号已验证，可参与邀请奖励。",
-    rewardRm3: "RM3 Voucher",
-    rewardExtraSpin: "额外一次",
-    rewardCoin10: "10 Coins",
-    rewardFreeShip: "Free Shipping",
-    rewardRm5: "RM5 Voucher",
-    rewardTryAgain: "再接再厉",
-    rewardRm10: "RM10 Voucher",
-    rewardMystery: "Mystery Gift",
-  },
   en: {
     topbarEyebrow: "Telegram Mini App",
-    topbarTitle: "Share & Get FREE Spin",
-    homeChip: "Invite to win rewards",
-    homeHeroTitle: "Invite friends to verify their Malaysia phone and get FREE Spins",
-    homeHeroDesc: "Each friend who completes Malaysia phone verification gives you 1 FREE Spin.",
-    statFreeSpins: "FREE Spins",
+    topbarTitle: "Ultrawin77 Reward Center",
+    homeChip: "UW rewards and referrals",
+    homeHeroTitle: "Check in daily, invite verified friends, and grow your UCoin balance",
+    homeHeroDesc: "This preview mirrors the UW reward flow: daily check-in, member tiers, referral tracking, and UltraMall redemption.",
     statUCoin: "UCoin",
+    statTier: "Tier",
     statInvited: "Invited",
     statVerified: "Verified",
-    shareNow: "Share Now",
-    spinNow: "Spin Now",
-    quickActionsTitle: "Quick Actions",
-    quickActionsHint: "Quick access",
-    quickCheckin: "Daily Check-In",
-    checkinReady: "Ready today",
-    quickVerify: "Phone Verify",
-    phoneStatusVerified: "Verified",
-    phoneStatusPending: "Not verified",
-    quickInvite: "Invite Friend",
-    quickMall: "UltraMall",
-    quickMallDesc: "Redeem with UCoin",
-    memberTierTitle: "Member Tier",
-    spinPageTitle: "Lucky Spin",
-    spinPageDesc: "Invite more friends to earn more spins after verification.",
-    spinCore: "SPIN",
-    rewardPoolTitle: "Reward Pool",
-    viewHistory: "View history",
-    referralEyebrow: "Your referral pass",
-    sharePageTitle: "Invite Friends, Earn More Spins",
-    shareTelegram: "Share on Telegram",
-    copyLink: "Copy Link",
     statShared: "Shared",
     statJoined: "Joined",
-    statSpinsEarned: "Spins Earned",
+    statRewardsEarned: "UCoin Earned",
+    statTotalInvites: "Total Invites",
+    spinNow: "Spin Now",
+    spinCore: "SPIN",
+    spinHint: "Tap the center button to spin.",
+    homeSpinTitle: "Lucky Spin",
+    homeSpinDesc: "Verified referrals can unlock more spin chances.",
+    openCheckin: "Open Check-In",
+    inviteFriends: "Invite Friends",
+    quickActionsTitle: "Quick Actions",
+    quickActionsHint: "Most used shortcuts",
+    quickCheckin: "Daily Check-In",
+    checkinReady: "Ready now",
+    checkinDone: "Claimed",
+    quickInvite: "Invite Friend",
+    quickMall: "UltraMall",
+    quickMallDesc: "Redeem UCoin rewards",
+    quickWorldCup: "World Cup Guess",
+    quickWorldCupDesc: "Linked from main bot",
+    memberTierTitle: "Member Tier",
+    checkinPageTitle: "Daily Check-In",
+    checkinPageDesc: "Your member tier changes how many UCoin you receive each day.",
+    todayRewardTitle: "Today's Reward",
+    checkinHint: "Check in once per day to collect your current tier reward.",
+    claimCheckin: "Claim Check-In",
+    viewTierRules: "View Tier Rules",
+    streakTitle: "Check-In Snapshot",
+    summaryLastCheckin: "Last check-in",
+    summaryTierMultiplier: "Tier multiplier",
+    summaryVerifiedFriends: "Verified friends",
+    rewardPoolTitle: "Tier Benefits",
+    benefitBronze: "Bronze +1",
+    benefitSilver: "Silver +2",
+    benefitGold: "Gold +3",
+    benefitInvite: "Verified referrals",
+    viewHistory: "View history",
+    referralEyebrow: "Your referral pass",
+    sharePageTitle: "Invite verified friends and earn more UCoin",
+    shareTelegram: "Share on Telegram",
+    copyLink: "Copy Link",
     inviteHistoryTitle: "Invite History",
     viewAll: "View all",
     walletEyebrow: "Reward wallet",
     mallPageTitle: "UltraMall Benefits",
+    mallBadge: "Claim ready",
     mallCreditTab: "Credit",
     mallGiftTab: "Gift",
+    mallCreditFive: "Redeem with 30 UCoin",
+    mallCreditTwelve: "Redeem with 70 UCoin",
+    mallCreditTwentyFive: "Redeem with 150 UCoin",
+    mallCreditFifty: "Redeem with 300 UCoin",
+    giftPowerBank: "Power Bank",
+    giftEarbuds: "Earbuds",
+    giftSmartWatch: "Smart Watch",
+    giftIPhone: "iPhone 17 Pro Max",
     accountEyebrow: "Telegram user",
-    phoneVerified: "Phone Verified",
+    phoneVerified: "Malaysia number verified",
     accountTier: "Current Tier",
-    statTotalInvites: "Total Invites",
     accountLastCheckin: "Last Check-In",
     menuInviteHistory: "Invite History",
-    menuSpinHistory: "Spin History",
     menuRewardHistory: "Reward History",
     menuPhoneVerification: "Phone Verification",
     menuTerms: "Terms & Rules",
     menuHelp: "Help Center",
+    menuWorldCup: "World Cup Guess",
     navHome: "Home",
-    navSpin: "Spin",
+    navCheckin: "Check-In",
     navShare: "Share",
     navMall: "Mall",
     navAccount: "Account",
-    spinResultEyebrow: "Spin Result",
-    nice: "Nice",
-    getMoreSpins: "Get More Spins",
+    modalEyebrow: "UW Preview",
+    close: "Close",
+    goShare: "Go Share",
     verified: "Verified",
     pending: "Pending",
     rewardSent: "Reward Sent",
     approved: "Approved",
-    resultNoSpinsTitle: "No Spins Left",
-    resultNoSpinsText: "Invite more friends and ask them to complete verification.",
-    resultTryAgainTitle: "Almost There",
-    resultTryAgainText: "This round did not win a prize. Share more to get another chance.",
-    resultWinTitle: "Congratulations!",
-    resultWinText: "You won {reward}",
-    spinsAvailable: "{count} spins available",
-    tierBronze: "Bronze",
-    tierSilver: "Silver",
-    tierGold: "Gold",
-    tierNextBronze: "{count} more successful invites to Silver",
-    tierNextSilver: "{count} more successful invites to Gold",
-    tierNextGold: "You are already at the highest Gold tier",
     modalCheckinTitle: "Daily Check-In Success",
-    modalCheckinText: "Today's check-in granted +{points} UCoin.",
+    modalCheckinText: "You received +{points} UCoin for today's check-in.",
+    alreadyCheckedInTitle: "Already Checked In",
+    alreadyCheckedInText: "You already claimed today's check-in reward.",
     modalInviteTitle: "Invite History",
-    modalSpinHistoryTitle: "Spin History",
     modalRewardHistoryTitle: "Reward History",
     modalPhoneTitle: "Phone Verification",
     modalTermsTitle: "Terms & Rules",
     modalHelpTitle: "Help Center",
-    termsText: "1. Referrers receive rewards only after a friend completes Malaysia phone verification.\n2. The same phone number counts once.\n3. UCoin and rewards may require approval.",
-    helpText: "Telegram Support: @Ultrawin77vvip\nWhatsApp: +60 17-801 1570\nWebsite: ultrawin77.com/my",
+    modalTierTitle: "Member Tier Rules",
+    modalWorldCupTitle: "World Cup Guess",
+    modalSpinTitle: "Spin Result",
+    noSpinTitle: "No Spins Left",
+    noSpinText: "Invite more verified friends to unlock more spin chances.",
+    termsText: "1. Referral rewards are counted after a friend completes verification.\n2. One phone number counts once.\n3. UCoin and claims may require admin approval.",
+    helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
+    tierInfoText: "Bronze member: +1 UCoin daily.\nSilver member: +2 UCoin daily after 20 verified invites.\nGold member: +3 UCoin daily after 50 verified invites.",
+    worldCupText: "World Cup Guess stays in the main bot flow. This mini app can later link out or embed a summary screen.",
     copySuccess: "Invite link copied",
     shareSoon: "Telegram native share can be connected here later.",
     phoneVerifiedLine: "Phone: {phone}",
     phoneVerifiedTime: "Verified at: {time}",
-    phoneVerifyAction: "This account is verified and can join invite rewards.",
-    rewardRm3: "RM3 Voucher",
-    rewardExtraSpin: "Extra Spin",
-    rewardCoin10: "10 Coins",
-    rewardFreeShip: "Free Shipping",
-    rewardRm5: "RM5 Voucher",
-    rewardTryAgain: "Try Again",
-    rewardRm10: "RM10 Voucher",
-    rewardMystery: "Mystery Gift",
+    phoneVerifyAction: "This demo account is already verified for the UW reward flow.",
+    tierBronze: "Bronze",
+    tierSilver: "Silver",
+    tierGold: "Gold",
+    tierNextBronze: "{count} more verified invites to Silver",
+    tierNextSilver: "{count} more verified invites to Gold",
+    tierNextGold: "You are already at the highest Gold tier",
+    spinsLeft: "{count} spins left",
+    spinWinText: "You won: {reward}",
   },
   ms: {
     topbarEyebrow: "Telegram Mini App",
-    topbarTitle: "Share & Get FREE Spin",
-    homeChip: "Jemput untuk menang hadiah",
-    homeHeroTitle: "Jemput rakan sahkan nombor Malaysia dan dapatkan FREE Spin",
-    homeHeroDesc: "Setiap rakan yang melengkapkan pengesahan nombor telefon Malaysia memberi anda 1 FREE Spin.",
-    statFreeSpins: "FREE Spins",
+    topbarTitle: "Pusat Ganjaran Ultrawin77",
+    homeChip: "Ganjaran dan rujukan UW",
+    homeHeroTitle: "Check-in setiap hari, jemput rakan yang disahkan, dan tambah baki UCoin anda",
+    homeHeroDesc: "Preview ini menunjukkan aliran ganjaran UW: daily check-in, tahap ahli, tracking referral, dan tebusan UltraMall.",
     statUCoin: "UCoin",
-    statInvited: "Jemputan",
+    statTier: "Tahap",
+    statInvited: "Dijemput",
     statVerified: "Disahkan",
-    shareNow: "Kongsi Sekarang",
-    spinNow: "Pusing Sekarang",
-    quickActionsTitle: "Tindakan Pantas",
-    quickActionsHint: "Akses pantas",
-    quickCheckin: "Daftar Masuk Harian",
-    checkinReady: "Sedia hari ini",
-    quickVerify: "Sahkan Telefon",
-    phoneStatusVerified: "Disahkan",
-    phoneStatusPending: "Belum disahkan",
-    quickInvite: "Jemput Rakan",
-    quickMall: "UltraMall",
-    quickMallDesc: "Tebus dengan UCoin",
-    memberTierTitle: "Tahap Ahli",
-    spinPageTitle: "Lucky Spin",
-    spinPageDesc: "Jemput lebih ramai rakan untuk dapatkan lebih banyak spin selepas pengesahan.",
-    spinCore: "PUSING",
-    rewardPoolTitle: "Kolam Hadiah",
-    viewHistory: "Lihat rekod",
-    referralEyebrow: "Pas jemputan anda",
-    sharePageTitle: "Jemput Rakan, Dapat Lebih Banyak FREE Spin",
-    shareTelegram: "Kongsi di Telegram",
-    copyLink: "Salin Pautan",
     statShared: "Dikongsi",
     statJoined: "Sertai",
-    statSpinsEarned: "Spin Diperoleh",
+    statRewardsEarned: "UCoin Diperoleh",
+    statTotalInvites: "Jumlah Jemputan",
+    spinNow: "Spin Sekarang",
+    spinCore: "SPIN",
+    spinHint: "Tekan butang tengah untuk spin.",
+    homeSpinTitle: "Lucky Spin",
+    homeSpinDesc: "Referral yang disahkan boleh membuka lebih banyak peluang spin.",
+    openCheckin: "Buka Check-In",
+    inviteFriends: "Jemput Rakan",
+    quickActionsTitle: "Tindakan Pantas",
+    quickActionsHint: "Pintasan paling kerap guna",
+    quickCheckin: "Daily Check-In",
+    checkinReady: "Boleh claim",
+    checkinDone: "Sudah claim",
+    quickInvite: "Jemput Rakan",
+    quickMall: "UltraMall",
+    quickMallDesc: "Tebus ganjaran UCoin",
+    quickWorldCup: "Teka Piala Dunia",
+    quickWorldCupDesc: "Dipaut dari bot utama",
+    memberTierTitle: "Tahap Ahli",
+    checkinPageTitle: "Daily Check-In",
+    checkinPageDesc: "Tahap ahli anda menentukan jumlah UCoin yang diterima setiap hari.",
+    todayRewardTitle: "Ganjaran Hari Ini",
+    checkinHint: "Check-in sekali sehari untuk claim ganjaran ikut tahap semasa.",
+    claimCheckin: "Claim Check-In",
+    viewTierRules: "Lihat Peraturan Tahap",
+    streakTitle: "Ringkasan Check-In",
+    summaryLastCheckin: "Check-in terakhir",
+    summaryTierMultiplier: "Pengganda tahap",
+    summaryVerifiedFriends: "Rakan disahkan",
+    rewardPoolTitle: "Faedah Tahap",
+    benefitBronze: "Bronze +1",
+    benefitSilver: "Silver +2",
+    benefitGold: "Gold +3",
+    benefitInvite: "Referral disahkan",
+    viewHistory: "Lihat rekod",
+    referralEyebrow: "Pas referral anda",
+    sharePageTitle: "Jemput rakan yang disahkan dan dapat lebih banyak UCoin",
+    shareTelegram: "Kongsi di Telegram",
+    copyLink: "Salin Pautan",
     inviteHistoryTitle: "Sejarah Jemputan",
     viewAll: "Lihat semua",
     walletEyebrow: "Dompet ganjaran",
     mallPageTitle: "Faedah UltraMall",
-    mallCreditTab: "Credit",
-    mallGiftTab: "Gift",
+    mallBadge: "Sedia dituntut",
+    mallCreditTab: "Kredit",
+    mallGiftTab: "Hadiah",
+    mallCreditFive: "Tebus dengan 30 UCoin",
+    mallCreditTwelve: "Tebus dengan 70 UCoin",
+    mallCreditTwentyFive: "Tebus dengan 150 UCoin",
+    mallCreditFifty: "Tebus dengan 300 UCoin",
+    giftPowerBank: "Power Bank",
+    giftEarbuds: "Earbuds",
+    giftSmartWatch: "Jam Pintar",
+    giftIPhone: "iPhone 17 Pro Max",
     accountEyebrow: "Pengguna Telegram",
-    phoneVerified: "Telefon Disahkan",
+    phoneVerified: "Nombor Malaysia disahkan",
     accountTier: "Tahap Semasa",
-    statTotalInvites: "Jumlah Jemputan",
     accountLastCheckin: "Check-In Terakhir",
     menuInviteHistory: "Sejarah Jemputan",
-    menuSpinHistory: "Sejarah Spin",
     menuRewardHistory: "Sejarah Ganjaran",
     menuPhoneVerification: "Pengesahan Telefon",
     menuTerms: "Terma & Peraturan",
     menuHelp: "Pusat Bantuan",
+    menuWorldCup: "Teka Piala Dunia",
     navHome: "Utama",
-    navSpin: "Spin",
+    navCheckin: "Check-In",
     navShare: "Kongsi",
     navMall: "Mall",
     navAccount: "Akaun",
-    spinResultEyebrow: "Hasil Spin",
-    nice: "Baik",
-    getMoreSpins: "Dapatkan Lagi Spin",
+    modalEyebrow: "Preview UW",
+    close: "Tutup",
+    goShare: "Pergi Kongsi",
     verified: "Disahkan",
     pending: "Menunggu",
     rewardSent: "Ganjaran Dihantar",
     approved: "Diluluskan",
-    resultNoSpinsTitle: "Tiada Spin Lagi",
-    resultNoSpinsText: "Jemput lebih ramai rakan dan minta mereka lengkapkan pengesahan.",
-    resultTryAgainTitle: "Hampir Berjaya",
-    resultTryAgainText: "Pusingan ini belum menang. Kongsi lagi untuk peluang seterusnya.",
-    resultWinTitle: "Tahniah!",
-    resultWinText: "Anda menang {reward}",
-    spinsAvailable: "{count} spin tersedia",
-    tierBronze: "Bronze",
-    tierSilver: "Silver",
-    tierGold: "Gold",
-    tierNextBronze: "{count} lagi jemputan berjaya ke Silver",
-    tierNextSilver: "{count} lagi jemputan berjaya ke Gold",
-    tierNextGold: "Anda sudah di tahap Gold tertinggi",
-    modalCheckinTitle: "Daftar Masuk Berjaya",
-    modalCheckinText: "Daftar masuk hari ini memberi +{points} UCoin.",
+    modalCheckinTitle: "Daily Check-In Berjaya",
+    modalCheckinText: "Anda menerima +{points} UCoin untuk check-in hari ini.",
+    alreadyCheckedInTitle: "Sudah Check-In",
+    alreadyCheckedInText: "Anda sudah claim ganjaran check-in hari ini.",
     modalInviteTitle: "Sejarah Jemputan",
-    modalSpinHistoryTitle: "Sejarah Spin",
     modalRewardHistoryTitle: "Sejarah Ganjaran",
     modalPhoneTitle: "Pengesahan Telefon",
     modalTermsTitle: "Terma & Peraturan",
     modalHelpTitle: "Pusat Bantuan",
-    termsText: "1. Pemberi rujukan menerima ganjaran selepas rakan melengkapkan pengesahan nombor Malaysia.\n2. Nombor yang sama hanya dikira sekali.\n3. UCoin dan hadiah mungkin perlu kelulusan.",
-    helpText: "Telegram Support: @Ultrawin77vvip\nWhatsApp: +60 17-801 1570\nWebsite: ultrawin77.com/my",
+    modalTierTitle: "Peraturan Tahap Ahli",
+    modalWorldCupTitle: "Teka Piala Dunia",
+    modalSpinTitle: "Hasil Spin",
+    noSpinTitle: "Tiada Spin Lagi",
+    noSpinText: "Jemput lebih ramai rakan yang disahkan untuk buka lebih banyak peluang spin.",
+    termsText: "1. Ganjaran referral dikira selepas rakan selesai pengesahan.\n2. Satu nombor telefon dikira sekali.\n3. UCoin dan tuntutan mungkin perlukan kelulusan admin.",
+    helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
+    tierInfoText: "Ahli Bronze: +1 UCoin sehari.\nAhli Silver: +2 UCoin sehari selepas 20 referral disahkan.\nAhli Gold: +3 UCoin sehari selepas 50 referral disahkan.",
+    worldCupText: "Teka Piala Dunia kekal dalam aliran bot utama. Mini app ini boleh dipautkan atau tunjuk ringkasan pada masa depan.",
     copySuccess: "Pautan jemputan telah disalin",
     shareSoon: "Perkongsian asli Telegram boleh disambung kemudian.",
     phoneVerifiedLine: "Telefon: {phone}",
     phoneVerifiedTime: "Disahkan pada: {time}",
-    phoneVerifyAction: "Akaun ini telah disahkan dan boleh menyertai ganjaran jemputan.",
-    rewardRm3: "Baucar RM3",
-    rewardExtraSpin: "Spin Tambahan",
-    rewardCoin10: "10 Syiling",
-    rewardFreeShip: "Penghantaran Percuma",
-    rewardRm5: "Baucar RM5",
-    rewardTryAgain: "Cuba Lagi",
-    rewardRm10: "Baucar RM10",
-    rewardMystery: "Hadiah Misteri",
+    phoneVerifyAction: "Akaun demo ini sudah disahkan untuk aliran ganjaran UW.",
+    tierBronze: "Bronze",
+    tierSilver: "Silver",
+    tierGold: "Gold",
+    tierNextBronze: "{count} lagi referral disahkan ke Silver",
+    tierNextSilver: "{count} lagi referral disahkan ke Gold",
+    tierNextGold: "Anda sudah berada pada tahap Gold tertinggi",
+    spinsLeft: "{count} spin lagi",
+    spinWinText: "Anda menang: {reward}",
+  },
+  zh: {
+    topbarEyebrow: "Telegram Mini App",
+    topbarTitle: "Ultrawin77 奖励中心",
+    homeChip: "UW 奖励与邀请",
+    homeHeroTitle: "每日签到，邀请已验证好友，持续累积你的 UCoin",
+    homeHeroDesc: "这个预览版对应 UW 的奖励流程：每日签到、会员等级、邀请追踪和 UltraMall 兑换。",
+    statUCoin: "UCoin",
+    statTier: "等级",
+    statInvited: "已邀请",
+    statVerified: "已验证",
+    statShared: "已分享",
+    statJoined: "已加入",
+    statRewardsEarned: "已得 UCoin",
+    statTotalInvites: "总邀请数",
+    spinNow: "立即抽奖",
+    spinCore: "SPIN",
+    spinHint: "点击中间按钮开始转盘。",
+    homeSpinTitle: "幸运转盘",
+    homeSpinDesc: "已验证邀请可以解锁更多抽奖机会。",
+    openCheckin: "打开签到",
+    inviteFriends: "邀请好友",
+    quickActionsTitle: "快捷功能",
+    quickActionsHint: "常用入口",
+    quickCheckin: "每日签到",
+    checkinReady: "现在可领",
+    checkinDone: "已领取",
+    quickInvite: "邀请好友",
+    quickMall: "UltraMall",
+    quickMallDesc: "兑换 UCoin 奖励",
+    quickWorldCup: "世界杯竞猜",
+    quickWorldCupDesc: "由主机器人承接",
+    memberTierTitle: "会员等级",
+    checkinPageTitle: "每日签到",
+    checkinPageDesc: "你的会员等级会影响每天可领取的 UCoin 数量。",
+    todayRewardTitle: "今日奖励",
+    checkinHint: "每天签到一次，按当前等级领取奖励。",
+    claimCheckin: "领取签到",
+    viewTierRules: "查看等级规则",
+    streakTitle: "签到概览",
+    summaryLastCheckin: "上次签到",
+    summaryTierMultiplier: "等级倍率",
+    summaryVerifiedFriends: "已验证好友",
+    rewardPoolTitle: "等级福利",
+    benefitBronze: "Bronze +1",
+    benefitSilver: "Silver +2",
+    benefitGold: "Gold +3",
+    benefitInvite: "已验证邀请",
+    viewHistory: "查看记录",
+    referralEyebrow: "你的邀请卡",
+    sharePageTitle: "邀请已验证好友，赚取更多 UCoin",
+    shareTelegram: "分享到 Telegram",
+    copyLink: "复制链接",
+    inviteHistoryTitle: "邀请记录",
+    viewAll: "查看全部",
+    walletEyebrow: "奖励钱包",
+    mallPageTitle: "UltraMall 福利",
+    mallBadge: "可兑换",
+    mallCreditTab: "充值",
+    mallGiftTab: "礼品",
+    mallCreditFive: "使用 30 UCoin 兑换",
+    mallCreditTwelve: "使用 70 UCoin 兑换",
+    mallCreditTwentyFive: "使用 150 UCoin 兑换",
+    mallCreditFifty: "使用 300 UCoin 兑换",
+    giftPowerBank: "充电宝",
+    giftEarbuds: "耳机",
+    giftSmartWatch: "智能手表",
+    giftIPhone: "iPhone 17 Pro Max",
+    accountEyebrow: "Telegram 用户",
+    phoneVerified: "马来西亚号码已验证",
+    accountTier: "当前等级",
+    accountLastCheckin: "上次签到",
+    menuInviteHistory: "邀请记录",
+    menuRewardHistory: "奖励记录",
+    menuPhoneVerification: "手机号验证",
+    menuTerms: "条款与规则",
+    menuHelp: "帮助中心",
+    menuWorldCup: "世界杯竞猜",
+    navHome: "首页",
+    navCheckin: "签到",
+    navShare: "分享",
+    navMall: "商城",
+    navAccount: "账户",
+    modalEyebrow: "UW 预览",
+    close: "关闭",
+    goShare: "去分享",
+    verified: "已验证",
+    pending: "待完成",
+    rewardSent: "已发奖励",
+    approved: "已通过",
+    modalCheckinTitle: "签到成功",
+    modalCheckinText: "你今天已获得 +{points} UCoin。",
+    alreadyCheckedInTitle: "今天已签到",
+    alreadyCheckedInText: "你今天的签到奖励已经领取过了。",
+    modalInviteTitle: "邀请记录",
+    modalRewardHistoryTitle: "奖励记录",
+    modalPhoneTitle: "手机号验证",
+    modalTermsTitle: "条款与规则",
+    modalHelpTitle: "帮助中心",
+    modalTierTitle: "会员等级规则",
+    modalWorldCupTitle: "世界杯竞猜",
+    modalSpinTitle: "抽奖结果",
+    noSpinTitle: "没有次数了",
+    noSpinText: "邀请更多已验证好友来解锁更多抽奖机会。",
+    termsText: "1. 好友完成验证后，邀请奖励才会计入。\n2. 同一个手机号只计算一次。\n3. UCoin 与兑换可能需要管理员审核。",
+    helpText: "Telegram 客服: {telegram}\nWhatsApp: {whatsapp}\n官网: {website}",
+    tierInfoText: "Bronze 会员：每日 +1 UCoin。\nSilver 会员：20 个已验证邀请后每日 +2 UCoin。\nGold 会员：50 个已验证邀请后每日 +3 UCoin。",
+    worldCupText: "世界杯竞猜仍然保留在主机器人流程里。这个 mini app 后面可以加跳转或摘要页面。",
+    copySuccess: "邀请链接已复制",
+    shareSoon: "之后可以接入 Telegram 原生分享。",
+    phoneVerifiedLine: "手机号：{phone}",
+    phoneVerifiedTime: "验证时间：{time}",
+    phoneVerifyAction: "这个演示账号已经完成 UW 奖励流程验证。",
+    tierBronze: "Bronze",
+    tierSilver: "Silver",
+    tierGold: "Gold",
+    tierNextBronze: "再有 {count} 个已验证邀请可升级到 Silver",
+    tierNextSilver: "再有 {count} 个已验证邀请可升级到 Gold",
+    tierNextGold: "你已经是最高 Gold 等级",
+    spinsLeft: "剩余 {count} 次",
+    spinWinText: "你抽中了：{reward}",
   },
 };
 
@@ -371,40 +446,48 @@ function t(key, params = {}) {
   return text;
 }
 
-function rewardLabel(rewardKey) {
-  const rewardMap = {
-    rm3: "rewardRm3",
-    extraSpin: "rewardExtraSpin",
-    coin10: "rewardCoin10",
-    freeShip: "rewardFreeShip",
-    rm5: "rewardRm5",
-    tryAgain: "rewardTryAgain",
-    rm10: "rewardRm10",
-    mystery: "rewardMystery",
-  };
-
-  return t(rewardMap[rewardKey]);
+function syncTelegramShell() {
+  if (!tg) return;
+  tg.ready();
+  tg.expand();
+  try {
+    tg.setHeaderColor("#1a140f");
+    tg.setBackgroundColor("#fff1e0");
+  } catch {
+    // Ignore Telegram shell errors outside Telegram.
+  }
 }
 
-function getTierInfo(invited) {
-  if (invited >= 50) {
+function syncTelegramUser() {
+  const telegramUser = tg?.initDataUnsafe?.user;
+  if (!telegramUser) return;
+
+  state.user.telegramId = telegramUser.id || null;
+  state.user.firstName = telegramUser.first_name || telegramUser.username || "UW";
+  state.user.displayName = telegramUser.username
+    ? `@${telegramUser.username}`
+    : [telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(" ") || state.user.displayName;
+}
+
+function getTierInfo(verified) {
+  if (verified >= 50) {
     return { key: "gold", multiplier: 3, progress: 100, next: t("tierNextGold") };
   }
 
-  if (invited >= 20) {
+  if (verified >= 20) {
     return {
       key: "silver",
       multiplier: 2,
-      progress: ((invited - 20) / 30) * 100,
-      next: t("tierNextSilver", { count: 50 - invited }),
+      progress: ((verified - 20) / 30) * 100,
+      next: t("tierNextSilver", { count: 50 - verified }),
     };
   }
 
   return {
     key: "bronze",
     multiplier: 1,
-    progress: (invited / 20) * 100,
-    next: t("tierNextBronze", { count: 20 - invited }),
+    progress: (verified / 20) * 100,
+    next: t("tierNextBronze", { count: 20 - verified }),
   };
 }
 
@@ -429,6 +512,13 @@ function openModal(eyebrow, title, bodyHtml, ctaTarget = "share") {
   document.body.style.top = `-${state.lockedScrollY}px`;
 }
 
+function closeCurrentModal() {
+  resultModal.classList.remove("is-open");
+  document.body.classList.remove("modal-open");
+  document.body.style.top = "";
+  window.scrollTo(0, state.lockedScrollY);
+}
+
 function showToast(message) {
   if (state.toastTimer) {
     window.clearTimeout(state.toastTimer);
@@ -444,8 +534,69 @@ function showToast(message) {
   }, 1800);
 }
 
+function buildReferralCode() {
+  return state.user.telegramId ? `UW77-${state.user.telegramId}` : "UW77-2486";
+}
+
+function buildReferralLink() {
+  const refValue = state.user.telegramId ? `ref_${state.user.telegramId}` : "ref_UW772486";
+  return `https://t.me/${appConfig.botUsername}?start=${refValue}`;
+}
+
+function buildShareText() {
+  return `Join Ultrawin77 Reward Center: ${buildReferralLink()}`;
+}
+
+function ensureHomeSpinWheel() {
+  if (document.getElementById("homeWheelZone")) return;
+
+  const spinPanel = document.getElementById("spinCountHome")?.closest(".panel");
+  if (!spinPanel) return;
+
+  spinPanel.classList.add("spin-panel");
+  spinPanel.querySelector(".reward-grid")?.remove();
+  spinPanel.querySelector(".cta-row")?.remove();
+
+  const wheelMarkup = document.createElement("div");
+  wheelMarkup.innerHTML = `
+    <div class="home-wheel-zone" id="homeWheelZone">
+      <div class="wheel-pointer"></div>
+      <div class="wheel" id="homeWheel">
+        <span class="wheel-label" data-spin-label="0">Try Again</span>
+        <span class="wheel-label" data-spin-label="1">Free Spin</span>
+        <span class="wheel-label" data-spin-label="2">+5 UCoin</span>
+        <span class="wheel-label" data-spin-label="3">+10 UCoin</span>
+        <span class="wheel-label" data-spin-label="4">RM5</span>
+        <span class="wheel-label" data-spin-label="5">RM12</span>
+        <span class="wheel-label" data-spin-label="6">RM25</span>
+      </div>
+      <button class="spin-core" id="homeSpinButton" type="button" data-action="spin-now" data-i18n="spinCore">SPIN</button>
+    </div>
+    <div class="spin-footer">
+      <span data-i18n="spinHint">Tap the center button to spin.</span>
+      <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
+    </div>
+  `;
+
+  spinPanel.append(...wheelMarkup.children);
+  homeWheel = document.getElementById("homeWheel");
+  homeWheelZone = document.getElementById("homeWheelZone");
+  actionButtons = [...document.querySelectorAll("[data-action]")];
+}
+
+function renderSpinLabels() {
+  document.querySelectorAll("[data-spin-label]").forEach((node) => {
+    const reward = spinRewards[Number(node.dataset.spinLabel)];
+    if (reward) {
+      node.textContent = reward.shortLabel;
+    }
+  });
+}
+
 function renderInviteList() {
   const root = document.getElementById("inviteList");
+  if (!root) return;
+
   root.innerHTML = inviteHistory
     .slice(0, 3)
     .map(
@@ -463,33 +614,68 @@ function renderInviteList() {
 }
 
 function renderDashboard() {
-  const tier = getTierInfo(state.user.invited);
+  const tier = getTierInfo(state.user.verified);
   const tierLabel = t(`tier${tier.key.charAt(0).toUpperCase()}${tier.key.slice(1)}`);
 
   document.documentElement.lang = state.currentLanguage === "zh" ? "zh-CN" : state.currentLanguage;
-  document.getElementById("spinCountHome").textContent = state.user.spinCount;
-  document.getElementById("spinCountSpin").textContent = t("spinsAvailable", { count: state.user.spinCount });
-  document.getElementById("ucoinHome").textContent = state.user.ucoin;
-  document.getElementById("invitedHome").textContent = state.user.invited;
-  document.getElementById("verifiedHome").textContent = state.user.verified;
-  document.getElementById("sharedCount").textContent = state.user.invited;
-  document.getElementById("joinedCount").textContent = state.user.joined;
-  document.getElementById("verifiedCount").textContent = state.user.verified;
-  document.getElementById("spinsEarnedCount").textContent = state.user.spinsEarned;
-  document.getElementById("walletUcoin").textContent = `UCoin ${state.user.ucoin}`;
-  document.getElementById("ucoinAccount").textContent = state.user.ucoin;
-  document.getElementById("accountTierShort").textContent = tierLabel;
-  document.getElementById("totalInvitesAccount").textContent = state.user.invited;
-  document.getElementById("lastCheckinShort").textContent = state.user.lastCheckin.slice(5);
-  document.getElementById("checkinStatus").textContent = state.user.canCheckin ? t("checkinReady") : state.user.lastCheckin;
-  document.getElementById("phoneStatusText").textContent = state.user.phoneVerified ? t("phoneStatusVerified") : t("phoneStatusPending");
-  document.getElementById("inviteDigest").textContent = `${state.user.verified} ${t("statVerified")}`;
-  document.getElementById("phoneVerifiedTag").textContent = state.user.phoneVerified ? t("phoneVerified") : t("phoneStatusPending");
-  document.getElementById("tierBadge").textContent = `${tierLabel} x${tier.multiplier}`;
-  document.getElementById("tierName").textContent = tierLabel;
-  document.getElementById("tierProgressText").textContent = tier.next;
-  document.getElementById("tierMultiplier").textContent = `x${tier.multiplier}`;
-  document.getElementById("tierFill").style.width = `${Math.max(8, tier.progress)}%`;
+
+  const mappings = {
+    ucoinHome: state.user.ucoin,
+    tierHome: tierLabel,
+    invitedHome: state.user.invited,
+    verifiedHome: state.user.verified,
+    sharedCount: state.user.invited,
+    joinedCount: state.user.joined,
+    verifiedCount: state.user.verified,
+    rewardsEarnedCount: state.user.rewardsEarned,
+    walletUcoin: `UCoin ${state.user.ucoin}`,
+    ucoinAccount: state.user.ucoin,
+    accountTierShort: tierLabel,
+    totalInvitesAccount: state.user.invited,
+    lastCheckinShort: state.user.lastCheckin.slice(5),
+    tierBadge: `${tierLabel} x${tier.multiplier}`,
+    tierName: tierLabel,
+    tierProgressText: tier.next,
+    tierMultiplier: `x${tier.multiplier}`,
+    tierSummaryCheckin: `${tierLabel} x${tier.multiplier}`,
+    checkinPoints: `+${tier.multiplier} UCoin`,
+    lastCheckinLabel: state.user.lastCheckin,
+    lastCheckinValue: state.user.lastCheckin,
+    tierMultiplierSummary: `x${tier.multiplier}`,
+    verifiedSummary: state.user.verified,
+    refCodeText: buildReferralCode(),
+    refLinkText: buildReferralLink(),
+    spinCountHome: t("spinsLeft", { count: state.user.spinCount }),
+    accountUsername: state.user.displayName,
+    avatarCore: state.user.firstName.slice(0, 1).toUpperCase(),
+  };
+
+  Object.entries(mappings).forEach(([id, value]) => {
+    const node = document.getElementById(id);
+    if (node) {
+      node.textContent = String(value);
+    }
+  });
+
+  const checkinStatus = document.getElementById("checkinStatus");
+  if (checkinStatus) {
+    checkinStatus.textContent = state.user.canCheckin ? t("checkinReady") : t("checkinDone");
+  }
+
+  const phoneVerifiedTag = document.getElementById("phoneVerifiedTag");
+  if (phoneVerifiedTag) {
+    phoneVerifiedTag.textContent = state.user.phoneVerified ? t("phoneVerified") : t("pending");
+  }
+
+  const inviteDigest = document.getElementById("inviteDigest");
+  if (inviteDigest) {
+    inviteDigest.textContent = `${state.user.verified} ${t("verified").toLowerCase()}`;
+  }
+
+  const tierFill = document.getElementById("tierFill");
+  if (tierFill) {
+    tierFill.style.width = `${Math.max(8, tier.progress)}%`;
+  }
 }
 
 function applyTranslations() {
@@ -497,6 +683,7 @@ function applyTranslations() {
     node.textContent = t(node.dataset.i18n);
   });
 
+  renderSpinLabels();
   renderInviteList();
   renderDashboard();
 }
@@ -512,23 +699,12 @@ function showInviteHistory() {
   );
 }
 
-function showSpinHistory() {
-  openModal(
-    t("menuSpinHistory"),
-    t("modalSpinHistoryTitle"),
-    `<div class="modal-list">${spinHistory
-      .map((item) => `<div class="modal-row"><strong>${rewardLabel(item.rewardKey)}</strong><span>${item.time}</span></div>`)
-      .join("")}</div>`,
-    "spin",
-  );
-}
-
 function showRewardHistory() {
   openModal(
     t("menuRewardHistory"),
     t("modalRewardHistoryTitle"),
     `<div class="modal-list">${rewardHistory
-      .map((item) => `<div class="modal-row"><strong>${item.item}</strong><span>${item.points} UCoin | ${item.time} | ${t(item.status)}</span></div>`)
+      .map((item) => `<div class="modal-row"><strong>${item.item}</strong><span>${item.amount} | ${item.time} | ${t(item.status)}</span></div>`)
       .join("")}</div>`,
     "mall",
   );
@@ -560,14 +736,136 @@ function showHelp() {
   openModal(
     t("menuHelp"),
     t("modalHelpTitle"),
-    `<div class="modal-copy">${t("helpText").replaceAll("\n", "<br>")}</div>`,
+    `<div class="modal-copy">${t("helpText", {
+      telegram: appConfig.supportTelegram,
+      whatsapp: appConfig.supportWhatsApp,
+      website: appConfig.websiteUrl,
+    }).replaceAll("\n", "<br>")}</div>`,
     "account",
   );
 }
 
+function showTierInfo() {
+  openModal(
+    t("memberTierTitle"),
+    t("modalTierTitle"),
+    `<div class="modal-copy">${t("tierInfoText").replaceAll("\n", "<br>")}</div>`,
+    "checkin",
+  );
+}
+
+function showWorldCupInfo() {
+  openModal(
+    t("menuWorldCup"),
+    t("modalWorldCupTitle"),
+    `<div class="modal-copy">${t("worldCupText")}</div>`,
+    "home",
+  );
+}
+
+function pickSpinRewardIndex() {
+  const totalWeight = spinRewards.reduce((total, reward) => total + reward.weight, 0);
+  let ticket = Math.random() * totalWeight;
+
+  for (let index = 0; index < spinRewards.length; index += 1) {
+    ticket -= spinRewards[index].weight;
+    if (ticket <= 0) {
+      return index;
+    }
+  }
+
+  return spinRewards.length - 1;
+}
+
+function runSpin() {
+  if (state.spinning) return;
+
+  if (state.user.spinCount <= 0) {
+    openModal(
+      t("homeSpinTitle"),
+      t("noSpinTitle"),
+      `<div class="modal-copy">${t("noSpinText")}</div>`,
+      "share",
+    );
+    return;
+  }
+
+  const rewardIndex = pickSpinRewardIndex();
+  const reward = spinRewards[rewardIndex];
+  const sectorAngle = 360 / spinRewards.length;
+  const stopAngle = 360 - rewardIndex * sectorAngle - sectorAngle / 2;
+  const currentMod = state.currentRotation % 360;
+  const nextRotation = state.currentRotation + 1800 + ((stopAngle - currentMod + 360) % 360);
+
+  state.spinning = true;
+  homeWheelZone?.classList.add("is-spinning");
+  state.user.spinCount -= 1;
+  state.currentRotation = nextRotation;
+  renderDashboard();
+
+  if (homeWheel) {
+    homeWheel.style.transform = `rotate(${state.currentRotation}deg)`;
+  }
+
+  window.setTimeout(() => {
+    if (reward.type === "ucoin") {
+      state.user.ucoin += reward.value;
+      state.user.rewardsEarned += reward.value;
+    }
+
+    if (reward.type === "spin") {
+      state.user.spinCount += reward.value;
+    }
+
+    rewardHistory.unshift({
+      item: `Spin Reward - ${reward.label}`,
+      amount: reward.type === "ucoin" ? `+${reward.value} UCoin` : reward.label,
+      time: "2026-07-09 12:00",
+      status: "approved",
+    });
+
+    state.spinning = false;
+    homeWheelZone?.classList.remove("is-spinning");
+    renderDashboard();
+    openModal(
+      t("homeSpinTitle"),
+      t("modalSpinTitle"),
+      `<div class="modal-copy">${t("spinWinText", { reward: reward.label })}</div>`,
+      "home",
+    );
+  }, 4300);
+}
+
+function runDailyCheckin() {
+  if (state.user.canCheckin) {
+    const points = getTierInfo(state.user.verified).multiplier;
+    state.user.canCheckin = false;
+    state.user.ucoin += points;
+    state.user.rewardsEarned += points;
+    state.user.lastCheckin = "2026-07-09";
+    renderDashboard();
+    openModal(
+      t("quickCheckin"),
+      t("modalCheckinTitle"),
+      `<div class="modal-copy">${t("modalCheckinText", { points })}</div>`,
+      "checkin",
+    );
+    return;
+  }
+
+  openModal(
+    t("quickCheckin"),
+    t("alreadyCheckedInTitle"),
+    `<div class="modal-copy">${t("alreadyCheckedInText")}</div>`,
+    "checkin",
+  );
+}
+
+ensureHomeSpinWheel();
+
 quickLinks.forEach((button) => {
   button.addEventListener("click", () => {
-    resultModal.classList.remove("is-open");
+    closeCurrentModal();
     setActiveScreen(button.dataset.target);
   });
 });
@@ -584,113 +882,58 @@ actionButtons.forEach((button) => {
     const action = button.dataset.action;
 
     if (action === "daily-checkin") {
-      if (state.user.canCheckin) {
-        const points = getTierInfo(state.user.invited).multiplier;
-        state.user.canCheckin = false;
-        state.user.ucoin += points;
-        state.user.lastCheckin = "2026-07-07";
-        renderDashboard();
-        openModal(
-          t("quickCheckin"),
-          t("modalCheckinTitle"),
-          `<div class="modal-copy">${t("modalCheckinText", { points })}</div>`,
-          "home",
-        );
-      } else {
-        openModal(t("quickCheckin"), t("quickCheckin"), `<div class="modal-copy">${state.user.lastCheckin}</div>`, "home");
-      }
-
+      runDailyCheckin();
       return;
     }
 
     if (action === "share-telegram") {
-      openModal(t("navShare"), t("shareTelegram"), `<div class="modal-copy">${t("shareSoon")}</div>`, "share");
+      if (tg?.openTelegramLink) {
+        const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(buildReferralLink())}&text=${encodeURIComponent(buildShareText())}`;
+        tg.openTelegramLink(shareUrl);
+      } else {
+        openModal(t("navShare"), t("shareTelegram"), `<div class="modal-copy">${t("shareSoon")}</div>`, "share");
+      }
       return;
     }
 
     if (action === "copy-link") {
       try {
-        await navigator.clipboard.writeText(document.getElementById("refLinkText").textContent);
+        await navigator.clipboard.writeText(buildReferralLink());
       } catch {
-        // Clipboard can fail in file:// preview mode. The demo still shows success feedback.
+        // Ignore clipboard failures in restricted preview environments.
       }
       showToast(t("copySuccess"));
       return;
     }
 
+    if (action === "spin-now") {
+      runSpin();
+      return;
+    }
+
     if (action === "invite-history") showInviteHistory();
-    if (action === "spin-history") showSpinHistory();
     if (action === "reward-history") showRewardHistory();
     if (action === "phone-verification") showPhoneInfo();
     if (action === "terms") showTerms();
     if (action === "help") showHelp();
+    if (action === "tier-info") showTierInfo();
+    if (action === "worldcup-info") showWorldCupInfo();
   });
 });
 
-spinButton.addEventListener("click", () => {
-  if (state.spinning) return;
-
-  if (state.user.spinCount <= 0) {
-    openModal(
-      t("spinResultEyebrow"),
-      t("resultNoSpinsTitle"),
-      `<div class="modal-copy">${t("resultNoSpinsText")}</div>`,
-      "share",
-    );
-    return;
-  }
-
-  state.spinning = true;
-  state.user.spinCount -= 1;
-  renderDashboard();
-
-  const rewardIndex = Math.floor(Math.random() * rewardKeys.length);
-  const rewardKey = rewardKeys[rewardIndex];
-  const sectorAngle = 360 / rewardKeys.length;
-  const stopAngle = 360 - rewardIndex * sectorAngle - sectorAngle / 2;
-
-  state.currentRotation += 1800 + stopAngle;
-  wheel.style.transform = `rotate(${state.currentRotation}deg)`;
-
-  window.setTimeout(() => {
-    if (rewardKey === "extraSpin") {
-      state.user.spinCount += 1;
-    }
-
-    renderDashboard();
-    openModal(
-      t("spinResultEyebrow"),
-      rewardKey === "tryAgain" ? t("resultTryAgainTitle") : t("resultWinTitle"),
-      `<div class="modal-copy">${
-        rewardKey === "tryAgain"
-          ? t("resultTryAgainText")
-          : t("resultWinText", { reward: rewardLabel(rewardKey) })
-      }</div>`,
-      "share",
-    );
-    state.spinning = false;
-  }, 4200);
-});
-
-languageSelect.addEventListener("change", () => {
+languageSelect?.addEventListener("change", () => {
   state.currentLanguage = languageSelect.value;
   applyTranslations();
 });
 
-closeModal.addEventListener("click", () => {
-  resultModal.classList.remove("is-open");
-  document.body.classList.remove("modal-open");
-  document.body.style.top = "";
-  window.scrollTo(0, state.lockedScrollY);
-});
+closeModal?.addEventListener("click", closeCurrentModal);
 
-resultModal.addEventListener("click", (event) => {
+resultModal?.addEventListener("click", (event) => {
   if (event.target === resultModal) {
-    resultModal.classList.remove("is-open");
-    document.body.classList.remove("modal-open");
-    document.body.style.top = "";
-    window.scrollTo(0, state.lockedScrollY);
+    closeCurrentModal();
   }
 });
 
+syncTelegramShell();
+syncTelegramUser();
 applyTranslations();
