@@ -22,6 +22,7 @@ const appConfig = {
   supportTelegram: "@Ultrawin77vvip",
   supportWhatsApp: "+60 17-801 1570",
   ultraMallUrl: "https://ultra-mall.atoms.world/",
+  dailyCheckinReward: 1,
 };
 
 const state = {
@@ -56,9 +57,8 @@ const inviteHistory = [
 ];
 
 const rewardHistory = [
-  { item: "Daily Check-In", amount: "+2 UCoin", time: "2026-07-08 20:00", status: "approved" },
-  { item: "Referral Reward", amount: "+5 UCoin", time: "2026-07-08 14:28", status: "approved" },
-  { item: "UltraMall RM5 Credit", amount: "-30 UCoin", time: "2026-07-07 17:05", status: "pending" },
+  { item: "Daily Check-In", amount: "+1 UCoin", time: "2026-07-08 20:00", status: "approved" },
+  { item: "Free Spin", amount: "+5 UCoin", time: "2026-07-08 14:28", status: "approved" },
 ];
 
 const spinRewards = [
@@ -75,10 +75,11 @@ const translations = {
   en: {
     topbarEyebrow: "Telegram Mini App",
     topbarTitle: "Ultrawin77 Reward Center",
-    homeChip: "UW rewards and referrals",
-    homeHeroTitle: "Check in daily, invite verified friends, and grow your UCoin balance",
-    homeHeroDesc: "This preview mirrors the UW reward flow: daily check-in, member tiers, referral tracking, and UltraMall redemption.",
+    homeChip: "UW check-in and free spin",
+    homeHeroTitle: "Check in daily and spin for UW rewards",
+    homeHeroDesc: "Simple Telegram Mini App flow: daily check-in and lucky free spin.",
     statUCoin: "UCoin",
+    freeSpinStat: "Free Spins",
     statTier: "Tier",
     statInvited: "Invited",
     statVerified: "Verified",
@@ -90,14 +91,16 @@ const translations = {
     spinCore: "SPIN",
     spinHint: "Tap the center button to spin.",
     homeSpinTitle: "Lucky Spin",
-    homeSpinDesc: "Verified referrals can unlock more spin chances.",
+    homeSpinDesc: "Use your free spin chance and watch the wheel animation reveal the result.",
     openCheckin: "Open Check-In",
     inviteFriends: "Invite Friends",
     quickActionsTitle: "Quick Actions",
-    quickActionsHint: "Most used shortcuts",
+    quickActionsHint: "Only the active UW rewards",
     quickCheckin: "Daily Check-In",
     checkinReady: "Ready now",
     checkinDone: "Claimed",
+    quickSpin: "Free Spin",
+    quickSpinDesc: "Spin the wheel now",
     quickInvite: "Invite Friend",
     quickMall: "UltraMall",
     quickMallDesc: "Redeem UCoin rewards",
@@ -105,9 +108,9 @@ const translations = {
     quickWorldCupDesc: "Linked from main bot",
     memberTierTitle: "Member Tier",
     checkinPageTitle: "Daily Check-In",
-    checkinPageDesc: "Your member tier changes how many UCoin you receive each day.",
+    checkinPageDesc: "Claim once per day to add UCoin to your balance.",
     todayRewardTitle: "Today's Reward",
-    checkinHint: "Check in once per day to collect your current tier reward.",
+    checkinHint: "Check in once per day to collect today's reward.",
     claimCheckin: "Claim Check-In",
     viewTierRules: "View Tier Rules",
     streakTitle: "Check-In Snapshot",
@@ -174,7 +177,7 @@ const translations = {
     modalWorldCupTitle: "World Cup Guess",
     modalSpinTitle: "Spin Result",
     noSpinTitle: "No Spins Left",
-    noSpinText: "Invite more verified friends to unlock more spin chances.",
+    noSpinText: "You have used all free spin chances for now. Please check again later.",
     termsText: "1. Referral rewards are counted after a friend completes verification.\n2. One phone number counts once.\n3. UCoin and claims may require admin approval.",
     helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
     tierInfoText: "Bronze member: +1 UCoin daily.\nSilver member: +2 UCoin daily after 20 verified invites.\nGold member: +3 UCoin daily after 50 verified invites.",
@@ -196,10 +199,11 @@ const translations = {
   ms: {
     topbarEyebrow: "Telegram Mini App",
     topbarTitle: "Pusat Ganjaran Ultrawin77",
-    homeChip: "Ganjaran dan rujukan UW",
-    homeHeroTitle: "Check-in setiap hari, jemput rakan yang disahkan, dan tambah baki UCoin anda",
-    homeHeroDesc: "Preview ini menunjukkan aliran ganjaran UW: daily check-in, tahap ahli, tracking referral, dan tebusan UltraMall.",
+    homeChip: "Check-in dan free spin UW",
+    homeHeroTitle: "Check-in setiap hari dan spin untuk ganjaran UW",
+    homeHeroDesc: "Aliran Mini App yang ringkas: daily check-in dan lucky free spin.",
     statUCoin: "UCoin",
+    freeSpinStat: "Free Spin",
     statTier: "Tahap",
     statInvited: "Dijemput",
     statVerified: "Disahkan",
@@ -211,14 +215,16 @@ const translations = {
     spinCore: "SPIN",
     spinHint: "Tekan butang tengah untuk spin.",
     homeSpinTitle: "Lucky Spin",
-    homeSpinDesc: "Referral yang disahkan boleh membuka lebih banyak peluang spin.",
+    homeSpinDesc: "Guna peluang free spin dan lihat animasi roda tunjuk keputusan.",
     openCheckin: "Buka Check-In",
     inviteFriends: "Jemput Rakan",
     quickActionsTitle: "Tindakan Pantas",
-    quickActionsHint: "Pintasan paling kerap guna",
+    quickActionsHint: "Hanya ganjaran UW yang aktif",
     quickCheckin: "Daily Check-In",
     checkinReady: "Boleh claim",
     checkinDone: "Sudah claim",
+    quickSpin: "Free Spin",
+    quickSpinDesc: "Spin roda sekarang",
     quickInvite: "Jemput Rakan",
     quickMall: "UltraMall",
     quickMallDesc: "Tebus ganjaran UCoin",
@@ -226,9 +232,9 @@ const translations = {
     quickWorldCupDesc: "Dipaut dari bot utama",
     memberTierTitle: "Tahap Ahli",
     checkinPageTitle: "Daily Check-In",
-    checkinPageDesc: "Tahap ahli anda menentukan jumlah UCoin yang diterima setiap hari.",
+    checkinPageDesc: "Claim sekali sehari untuk tambah UCoin ke baki anda.",
     todayRewardTitle: "Ganjaran Hari Ini",
-    checkinHint: "Check-in sekali sehari untuk claim ganjaran ikut tahap semasa.",
+    checkinHint: "Check-in sekali sehari untuk claim ganjaran hari ini.",
     claimCheckin: "Claim Check-In",
     viewTierRules: "Lihat Peraturan Tahap",
     streakTitle: "Ringkasan Check-In",
@@ -295,7 +301,7 @@ const translations = {
     modalWorldCupTitle: "Teka Piala Dunia",
     modalSpinTitle: "Hasil Spin",
     noSpinTitle: "Tiada Spin Lagi",
-    noSpinText: "Jemput lebih ramai rakan yang disahkan untuk buka lebih banyak peluang spin.",
+    noSpinText: "Anda sudah guna semua peluang free spin buat masa ini. Sila semak semula kemudian.",
     termsText: "1. Ganjaran referral dikira selepas rakan selesai pengesahan.\n2. Satu nombor telefon dikira sekali.\n3. UCoin dan tuntutan mungkin perlukan kelulusan admin.",
     helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
     tierInfoText: "Ahli Bronze: +1 UCoin sehari.\nAhli Silver: +2 UCoin sehari selepas 20 referral disahkan.\nAhli Gold: +3 UCoin sehari selepas 50 referral disahkan.",
@@ -437,6 +443,54 @@ const translations = {
   },
 };
 
+Object.assign(translations.zh, {
+  topbarEyebrow: "Telegram Mini App",
+  topbarTitle: "Ultrawin77 奖励中心",
+  homeChip: "UW 签到和免费转盘",
+  homeHeroTitle: "每日签到，免费转盘赢 UW 奖励",
+  homeHeroDesc: "简化版 Telegram Mini App：只保留每日签到和免费转盘。",
+  statUCoin: "UCoin",
+  freeSpinStat: "免费转盘",
+  spinNow: "立即转盘",
+  spinCore: "SPIN",
+  spinHint: "点击中间按钮开始转盘。",
+  homeSpinTitle: "幸运转盘",
+  homeSpinDesc: "使用你的免费转盘次数，等待动画显示结果。",
+  openCheckin: "打开签到",
+  quickActionsTitle: "快捷功能",
+  quickActionsHint: "只保留 UW 当前奖励",
+  quickCheckin: "每日签到",
+  checkinReady: "现在可领取",
+  checkinDone: "已领取",
+  quickSpin: "免费转盘",
+  quickSpinDesc: "现在开始转盘",
+  checkinPageTitle: "每日签到",
+  checkinPageDesc: "每天领取一次，把 UCoin 加到余额。",
+  todayRewardTitle: "今日奖励",
+  checkinHint: "每天签到一次，领取今日奖励。",
+  claimCheckin: "领取签到",
+  streakTitle: "签到状态",
+  summaryLastCheckin: "上次签到",
+  navHome: "首页",
+  navCheckin: "签到",
+  modalEyebrow: "UW 预览",
+  close: "关闭",
+  modalCheckinTitle: "签到成功",
+  modalCheckinText: "你今天已获得 +{points} UCoin。",
+  alreadyCheckedInTitle: "今天已签到",
+  alreadyCheckedInText: "你今天的签到奖励已经领取过了。",
+  modalSpinTitle: "转盘结果",
+  noSpinTitle: "没有转盘次数",
+  noSpinText: "你现在的免费转盘次数已用完，请稍后再查看。",
+  spinsLeft: "剩余 {count} 次",
+  spinWinText: "你抽中了：{reward}",
+});
+
+const zhLanguageOption = languageSelect?.querySelector('option[value="zh"]');
+if (zhLanguageOption) {
+  zhLanguageOption.textContent = "中文";
+}
+
 function t(key, params = {}) {
   const table = translations[state.currentLanguage] || translations.en;
   let text = table[key] || translations.en[key] || key;
@@ -492,6 +546,10 @@ function getTierInfo(verified) {
 }
 
 function setActiveScreen(target) {
+  if (!screens.some((screen) => screen.dataset.screen === target)) {
+    target = "home";
+  }
+
   screens.forEach((screen) => {
     screen.classList.toggle("is-active", screen.dataset.screen === target);
   });
@@ -501,7 +559,7 @@ function setActiveScreen(target) {
   });
 }
 
-function openModal(eyebrow, title, bodyHtml, ctaTarget = "share") {
+function openModal(eyebrow, title, bodyHtml, ctaTarget = "home") {
   modalEyebrow.textContent = eyebrow;
   resultTitle.textContent = title;
   resultBody.innerHTML = bodyHtml;
@@ -574,7 +632,6 @@ function ensureHomeSpinWheel() {
     </div>
     <div class="spin-footer">
       <span data-i18n="spinHint">Tap the center button to spin.</span>
-      <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
     </div>
   `;
 
@@ -621,6 +678,9 @@ function renderDashboard() {
 
   const mappings = {
     ucoinHome: state.user.ucoin,
+    ucoinCheckin: state.user.ucoin,
+    spinCountStat: state.user.spinCount,
+    spinCountCheckin: state.user.spinCount,
     tierHome: tierLabel,
     invitedHome: state.user.invited,
     verifiedHome: state.user.verified,
@@ -638,7 +698,7 @@ function renderDashboard() {
     tierProgressText: tier.next,
     tierMultiplier: `x${tier.multiplier}`,
     tierSummaryCheckin: `${tierLabel} x${tier.multiplier}`,
-    checkinPoints: `+${tier.multiplier} UCoin`,
+    checkinPoints: `+${appConfig.dailyCheckinReward} UCoin`,
     lastCheckinLabel: state.user.lastCheckin,
     lastCheckinValue: state.user.lastCheckin,
     tierMultiplierSummary: `x${tier.multiplier}`,
@@ -660,6 +720,11 @@ function renderDashboard() {
   const checkinStatus = document.getElementById("checkinStatus");
   if (checkinStatus) {
     checkinStatus.textContent = state.user.canCheckin ? t("checkinReady") : t("checkinDone");
+  }
+
+  const checkinStatusSummary = document.getElementById("checkinStatusSummary");
+  if (checkinStatusSummary) {
+    checkinStatusSummary.textContent = state.user.canCheckin ? t("checkinReady") : t("checkinDone");
   }
 
   const phoneVerifiedTag = document.getElementById("phoneVerifiedTag");
@@ -695,7 +760,7 @@ function showInviteHistory() {
     `<div class="modal-list">${inviteHistory
       .map((item) => `<div class="modal-row"><strong>${item.name}</strong><span>${item.time} | ${t(item.status)}</span></div>`)
       .join("")}</div>`,
-    "share",
+    "home",
   );
 }
 
@@ -706,7 +771,7 @@ function showRewardHistory() {
     `<div class="modal-list">${rewardHistory
       .map((item) => `<div class="modal-row"><strong>${item.item}</strong><span>${item.amount} | ${item.time} | ${t(item.status)}</span></div>`)
       .join("")}</div>`,
-    "mall",
+    "home",
   );
 }
 
@@ -719,7 +784,7 @@ function showPhoneInfo() {
       <div class="modal-row"><span>${t("phoneVerifiedTime", { time: state.user.phoneVerifiedAt })}</span></div>
       <div class="modal-row"><span>${t("phoneVerifyAction")}</span></div>
     </div>`,
-    "account",
+    "home",
   );
 }
 
@@ -728,7 +793,7 @@ function showTerms() {
     t("menuTerms"),
     t("modalTermsTitle"),
     `<div class="modal-copy">${t("termsText").replaceAll("\n", "<br>")}</div>`,
-    "account",
+    "home",
   );
 }
 
@@ -741,7 +806,7 @@ function showHelp() {
       whatsapp: appConfig.supportWhatsApp,
       website: appConfig.websiteUrl,
     }).replaceAll("\n", "<br>")}</div>`,
-    "account",
+    "home",
   );
 }
 
@@ -785,7 +850,7 @@ function runSpin() {
       t("homeSpinTitle"),
       t("noSpinTitle"),
       `<div class="modal-copy">${t("noSpinText")}</div>`,
-      "share",
+      "home",
     );
     return;
   }
@@ -838,7 +903,7 @@ function runSpin() {
 
 function runDailyCheckin() {
   if (state.user.canCheckin) {
-    const points = getTierInfo(state.user.verified).multiplier;
+    const points = appConfig.dailyCheckinReward;
     state.user.canCheckin = false;
     state.user.ucoin += points;
     state.user.rewardsEarned += points;
@@ -891,7 +956,7 @@ actionButtons.forEach((button) => {
         const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(buildReferralLink())}&text=${encodeURIComponent(buildShareText())}`;
         tg.openTelegramLink(shareUrl);
       } else {
-        openModal(t("navShare"), t("shareTelegram"), `<div class="modal-copy">${t("shareSoon")}</div>`, "share");
+        openModal(t("navHome"), t("shareTelegram"), `<div class="modal-copy">${t("shareSoon")}</div>`, "home");
       }
       return;
     }

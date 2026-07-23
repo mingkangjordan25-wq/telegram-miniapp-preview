@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Ultrawin77 Reward Center</title>
-  <link rel="stylesheet" href="styles.css?v=uw-bot-miniapp-1">
+  <link rel="stylesheet" href="styles.css?v=uw-checkin-freespin-1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -25,9 +25,9 @@
       <section class="screen is-active" data-screen="home">
         <div class="hero-card compact-hero">
           <div class="hero-copy">
-            <span class="hero-chip" data-i18n="homeChip">UW rewards and referrals</span>
-            <h2 data-i18n="homeHeroTitle">Check in daily, invite verified friends, and grow your UCoin balance</h2>
-            <p data-i18n="homeHeroDesc">This preview mirrors the UW reward flow: daily check-in, member tiers, referral tracking, and UltraMall redemption.</p>
+            <span class="hero-chip" data-i18n="homeChip">UW check-in and free spin</span>
+            <h2 data-i18n="homeHeroTitle">Check in daily and spin for UW rewards</h2>
+            <p data-i18n="homeHeroDesc">Simple Telegram Mini App flow: daily check-in and lucky free spin.</p>
           </div>
           <div class="hero-orb"></div>
         </div>
@@ -37,7 +37,7 @@
             <h3 data-i18n="homeSpinTitle">Lucky Spin</h3>
             <span id="spinCountHome">2 spins left</span>
           </div>
-          <p class="subtle" data-i18n="homeSpinDesc">Verified referrals can unlock more spin chances.</p>
+          <p class="subtle" data-i18n="homeSpinDesc">Use your free spin chance and watch the wheel animation reveal the result.</p>
 
           <div class="home-wheel-zone" id="homeWheelZone">
             <div class="wheel-pointer"></div>
@@ -55,7 +55,6 @@
 
           <div class="spin-footer">
             <span data-i18n="spinHint">Tap the center button to spin.</span>
-            <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
           </div>
         </section>
 
@@ -65,63 +64,30 @@
             <strong id="ucoinHome">128</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="statTier">Tier</span>
-            <strong id="tierHome">Silver</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statInvited">Invited</span>
-            <strong id="invitedHome">26</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statVerified">Verified</span>
-            <strong id="verifiedHome">18</strong>
+            <span data-i18n="freeSpinStat">Free Spins</span>
+            <strong id="spinCountStat">2</strong>
           </article>
         </div>
 
         <div class="cta-row">
           <button class="primary-btn" type="button" data-action="spin-now" data-i18n="spinNow">Spin Now</button>
-          <button class="secondary-btn" type="button" data-target="share" data-i18n="inviteFriends">Invite Friends</button>
+          <button class="secondary-btn" type="button" data-target="checkin" data-i18n="openCheckin">Open Check-In</button>
         </div>
 
         <section class="panel quick-panel">
           <div class="panel-head">
             <h3 data-i18n="quickActionsTitle">Quick Actions</h3>
-            <span data-i18n="quickActionsHint">Most used shortcuts</span>
+            <span data-i18n="quickActionsHint">Only the active UW rewards</span>
           </div>
           <div class="quick-grid">
-            <button class="quick-card" type="button" data-action="daily-checkin">
+            <button class="quick-card" type="button" data-target="checkin">
               <strong data-i18n="quickCheckin">Daily Check-In</strong>
               <span id="checkinStatus" data-i18n="checkinReady">Ready now</span>
             </button>
-            <button class="quick-card" type="button" data-target="share">
-              <strong data-i18n="quickInvite">Invite Friend</strong>
-              <span id="inviteDigest">18 verified</span>
+            <button class="quick-card" type="button" data-action="spin-now">
+              <strong data-i18n="quickSpin">Free Spin</strong>
+              <span data-i18n="quickSpinDesc">Spin the wheel now</span>
             </button>
-            <button class="quick-card" type="button" data-target="mall">
-              <strong data-i18n="quickMall">UltraMall</strong>
-              <span data-i18n="quickMallDesc">Redeem UCoin rewards</span>
-            </button>
-            <button class="quick-card" type="button" data-action="worldcup-info">
-              <strong data-i18n="quickWorldCup">World Cup Guess</strong>
-              <span data-i18n="quickWorldCupDesc">Linked from main bot</span>
-            </button>
-          </div>
-        </section>
-
-        <section class="panel digest-panel">
-          <div class="panel-head">
-            <h3 data-i18n="memberTierTitle">Member Tier</h3>
-            <span id="tierBadge">Silver x2</span>
-          </div>
-          <div class="tier-summary">
-            <div>
-              <p class="tier-value" id="tierName">Silver</p>
-              <p class="tier-note" id="tierProgressText">24 more verified invites to Gold</p>
-            </div>
-            <div class="tier-chip" id="tierMultiplier">x2</div>
-          </div>
-          <div class="tier-bar">
-            <div class="tier-fill" id="tierFill"></div>
           </div>
         </section>
       </section>
@@ -130,20 +96,20 @@
         <section class="panel hero-panel compact">
           <div class="panel-head">
             <h3 data-i18n="checkinPageTitle">Daily Check-In</h3>
-            <span id="tierSummaryCheckin">Silver x2</span>
+            <span id="checkinStatusSummary">Ready now</span>
           </div>
-          <p class="subtle" data-i18n="checkinPageDesc">Your member tier changes how many UCoin you receive each day.</p>
+          <p class="subtle" data-i18n="checkinPageDesc">Claim once per day to add UCoin to your balance.</p>
         </section>
 
         <section class="panel">
           <div class="panel-head">
             <h3 data-i18n="todayRewardTitle">Today's Reward</h3>
-            <span id="checkinPoints">+2 UCoin</span>
+            <span id="checkinPoints">+1 UCoin</span>
           </div>
-          <p class="subtle" id="checkinHint" data-i18n="checkinHint">Check in once per day to collect your current tier reward.</p>
+          <p class="subtle" id="checkinHint" data-i18n="checkinHint">Check in once per day to collect today's reward.</p>
           <div class="cta-row">
             <button class="primary-btn" id="checkinButton" type="button" data-action="daily-checkin" data-i18n="claimCheckin">Claim Check-In</button>
-            <button class="secondary-btn" type="button" data-action="tier-info" data-i18n="viewTierRules">View Tier Rules</button>
+            <button class="secondary-btn" type="button" data-target="home" data-i18n="navHome">Home</button>
           </div>
         </section>
 
@@ -158,160 +124,14 @@
               <span id="lastCheckinValue">2026-07-08</span>
             </div>
             <div class="summary-row">
-              <strong data-i18n="summaryTierMultiplier">Tier multiplier</strong>
-              <span id="tierMultiplierSummary">x2</span>
+              <strong data-i18n="statUCoin">UCoin</strong>
+              <span id="ucoinCheckin">128</span>
             </div>
             <div class="summary-row">
-              <strong data-i18n="summaryVerifiedFriends">Verified friends</strong>
-              <span id="verifiedSummary">18</span>
+              <strong data-i18n="freeSpinStat">Free Spins</strong>
+              <span id="spinCountCheckin">2</span>
             </div>
           </div>
-        </section>
-
-        <section class="panel mini-bottom-panel">
-          <div class="panel-head">
-            <h3 data-i18n="rewardPoolTitle">Tier Benefits</h3>
-            <button class="text-link" type="button" data-action="reward-history" data-i18n="viewHistory">View history</button>
-          </div>
-          <div class="reward-grid compact-rewards">
-            <span data-i18n="benefitBronze">Bronze +1</span>
-            <span data-i18n="benefitSilver">Silver +2</span>
-            <span data-i18n="benefitGold">Gold +3</span>
-            <span data-i18n="benefitInvite">Verified referrals</span>
-          </div>
-        </section>
-      </section>
-
-      <section class="screen" data-screen="share">
-        <section class="invite-card compact-card">
-          <p class="eyebrow" data-i18n="referralEyebrow">Your referral pass</p>
-          <h3 data-i18n="sharePageTitle">Invite verified friends and earn more UCoin</h3>
-          <div class="ref-code" id="refCodeText">UW77-2486</div>
-          <p class="ref-link" id="refLinkText">https://t.me/UltrawinGroup_bot?start=ref_UW772486</p>
-          <div class="cta-row">
-            <button class="primary-btn" type="button" data-action="share-telegram" data-i18n="shareTelegram">Share on Telegram</button>
-            <button class="secondary-btn" type="button" data-action="copy-link" data-i18n="copyLink">Copy Link</button>
-          </div>
-        </section>
-
-        <div class="stats-grid share-grid">
-          <article class="stat-card accent">
-            <span data-i18n="statShared">Shared</span>
-            <strong id="sharedCount">26</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statJoined">Joined</span>
-            <strong id="joinedCount">21</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statVerified">Verified</span>
-            <strong id="verifiedCount">18</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statRewardsEarned">UCoin Earned</span>
-            <strong id="rewardsEarnedCount">46</strong>
-          </article>
-        </div>
-
-        <section class="panel compact-list-panel">
-          <div class="panel-head">
-            <h3 data-i18n="inviteHistoryTitle">Invite History</h3>
-            <button class="text-link" type="button" data-action="invite-history" data-i18n="viewAll">View all</button>
-          </div>
-          <div class="invite-list compact-list" id="inviteList"></div>
-        </section>
-      </section>
-
-      <section class="screen" data-screen="mall">
-        <section class="wallet-card compact-card">
-          <div>
-            <p class="eyebrow" data-i18n="walletEyebrow">Reward wallet</p>
-            <h3 data-i18n="mallPageTitle">UltraMall Benefits</h3>
-          </div>
-          <div class="wallet-badges">
-            <span id="walletUcoin">UCoin 128</span>
-            <span data-i18n="mallBadge">Claim ready</span>
-          </div>
-        </section>
-
-        <section class="segmented-tabs">
-          <button class="segment is-active" type="button" data-mall-tab="credit" data-i18n="mallCreditTab">Credit</button>
-          <button class="segment" type="button" data-mall-tab="gift" data-i18n="mallGiftTab">Gift</button>
-        </section>
-
-        <section class="panel mall-tab is-active" data-mall-panel="credit">
-          <div class="product-grid mall-grid">
-            <article class="product-card">
-              <h4>RM5 Credit</h4>
-              <p data-i18n="mallCreditFive">Redeem with 30 UCoin</p>
-              <strong>30</strong>
-            </article>
-            <article class="product-card">
-              <h4>RM12 Credit</h4>
-              <p data-i18n="mallCreditTwelve">Redeem with 70 UCoin</p>
-              <strong>70</strong>
-            </article>
-            <article class="product-card">
-              <h4>RM25 Credit</h4>
-              <p data-i18n="mallCreditTwentyFive">Redeem with 150 UCoin</p>
-              <strong>150</strong>
-            </article>
-            <article class="product-card">
-              <h4>RM50 Credit</h4>
-              <p data-i18n="mallCreditFifty">Redeem with 300 UCoin</p>
-              <strong>300</strong>
-            </article>
-          </div>
-        </section>
-
-        <section class="panel mall-tab" data-mall-panel="gift">
-          <div class="offer-list compact-list">
-            <article><strong data-i18n="giftPowerBank">Power Bank</strong><p>1000 UCoin</p></article>
-            <article><strong data-i18n="giftEarbuds">Earbuds</strong><p>2500 UCoin</p></article>
-            <article><strong data-i18n="giftSmartWatch">Smart Watch</strong><p>8000 UCoin</p></article>
-            <article><strong data-i18n="giftIPhone">iPhone 17 Pro Max</strong><p>15000 UCoin</p></article>
-          </div>
-        </section>
-      </section>
-
-      <section class="screen" data-screen="account">
-        <section class="profile-card compact-card">
-          <div class="avatar-ring">
-            <div class="avatar-core" id="avatarCore">U</div>
-          </div>
-          <div>
-            <p class="eyebrow" data-i18n="accountEyebrow">Telegram user</p>
-            <h3 id="accountUsername">@uw_member_demo</h3>
-            <span class="tag success wide" id="phoneVerifiedTag" data-i18n="phoneVerified">Malaysia number verified</span>
-          </div>
-        </section>
-
-        <div class="stats-grid share-grid">
-          <article class="stat-card accent">
-            <span data-i18n="statUCoin">UCoin</span>
-            <strong id="ucoinAccount">128</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="accountTier">Current Tier</span>
-            <strong id="accountTierShort">Silver</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="statTotalInvites">Total Invites</span>
-            <strong id="totalInvitesAccount">26</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="accountLastCheckin">Last Check-In</span>
-            <strong id="lastCheckinShort">07-08</strong>
-          </article>
-        </div>
-
-        <section class="panel menu-panel compact-menu">
-          <button type="button" data-action="invite-history" data-i18n="menuInviteHistory">Invite History</button>
-          <button type="button" data-action="reward-history" data-i18n="menuRewardHistory">Reward History</button>
-          <button type="button" data-action="phone-verification" data-i18n="menuPhoneVerification">Phone Verification</button>
-          <button type="button" data-action="terms" data-i18n="menuTerms">Terms & Rules</button>
-          <button type="button" data-action="help" data-i18n="menuHelp">Help Center</button>
-          <button type="button" data-action="worldcup-info" data-i18n="menuWorldCup">World Cup Guess</button>
         </section>
       </section>
     </main>
@@ -322,15 +142,6 @@
       </button>
       <button class="nav-item" type="button" data-target="checkin">
         <span data-i18n="navCheckin">Check-In</span>
-      </button>
-      <button class="nav-item" type="button" data-target="share">
-        <span data-i18n="navShare">Share</span>
-      </button>
-      <button class="nav-item" type="button" data-target="mall">
-        <span data-i18n="navMall">Mall</span>
-      </button>
-      <button class="nav-item" type="button" data-target="account">
-        <span data-i18n="navAccount">Account</span>
       </button>
     </nav>
   </div>
@@ -344,13 +155,13 @@
       </div>
       <div class="cta-row">
         <button class="primary-btn" id="closeModal" type="button" data-i18n="close">Close</button>
-        <button class="secondary-btn" type="button" data-target="share" data-i18n="goShare">Go Share</button>
+        <button class="secondary-btn" type="button" data-target="home" data-i18n="navHome">Home</button>
       </div>
     </div>
   </div>
 
   <div class="toast" id="toast" aria-live="polite" aria-hidden="true"></div>
 
-  <script src="script.js?v=uw-bot-miniapp-1"></script>
+  <script src="script.js?v=uw-checkin-freespin-1"></script>
 </body>
 </html>
