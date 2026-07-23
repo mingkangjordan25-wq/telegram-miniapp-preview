@@ -499,21 +499,28 @@ body.modal-open {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 104px;
-  text-align: right;
-  transform-origin: 0 0;
-  font-weight: 800;
-  color: #7b3602;
-  font-size: 14px;
+  width: 72px;
+  margin: 0;
+  text-align: center;
+  transform-origin: 50% 50%;
+  font-weight: 900;
+  color: #5a2a05;
+  font-size: clamp(10px, 3vw, 12px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.38);
+  --label-radius: min(21vw, 78px);
+  transform: translate(-50%, -50%) rotate(var(--label-angle)) translateY(calc(-1 * var(--label-radius)));
 }
 
-.wheel-label:nth-child(1) { transform: rotate(-64.286deg) translate(18px, -10px); }
-.wheel-label:nth-child(2) { transform: rotate(-12.858deg) translate(18px, -10px); }
-.wheel-label:nth-child(3) { transform: rotate(38.57deg) translate(18px, -10px); }
-.wheel-label:nth-child(4) { transform: rotate(89.998deg) translate(18px, -10px); }
-.wheel-label:nth-child(5) { transform: rotate(141.426deg) translate(18px, -10px); }
-.wheel-label:nth-child(6) { transform: rotate(192.854deg) translate(18px, -10px); }
-.wheel-label:nth-child(7) { transform: rotate(244.282deg) translate(18px, -10px); }
+.wheel-label:nth-child(1) { --label-angle: 25.714deg; }
+.wheel-label:nth-child(2) { --label-angle: 77.142deg; }
+.wheel-label:nth-child(3) { --label-angle: 128.57deg; }
+.wheel-label:nth-child(4) { --label-angle: 179.998deg; }
+.wheel-label:nth-child(5) { --label-angle: 231.426deg; }
+.wheel-label:nth-child(6) { --label-angle: 282.854deg; }
+.wheel-label:nth-child(7) { --label-angle: 334.282deg; }
 
 .spin-core {
   position: absolute;
