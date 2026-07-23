@@ -15,6 +15,7 @@ const toast = document.getElementById("toast");
 let homeWheel = document.getElementById("homeWheel");
 let homeWheelZone = document.getElementById("homeWheelZone");
 const tg = window.Telegram?.WebApp || null;
+const pageParams = new URLSearchParams(window.location.search);
 
 const appConfig = {
   botUsername: "UltrawinGroup_bot",
@@ -23,6 +24,8 @@ const appConfig = {
   supportWhatsApp: "+60 17-801 1570",
   ultraMallUrl: "https://ultra-mall.atoms.world/",
   dailyCheckinReward: 1,
+  spinCost: 5,
+  apiBaseUrl: (pageParams.get("api") || window.UW_MINIAPP_API_BASE || "").replace(/\/$/, ""),
 };
 
 const state = {
@@ -31,12 +34,16 @@ const state = {
   currentRotation: 0,
   toastTimer: null,
   lockedScrollY: 0,
+  backendLoaded: false,
   user: {
     telegramId: null,
     displayName: "@uw_member_demo",
     firstName: "UW",
     ucoin: 128,
-    spinCount: 2,
+    spinCount: 1,
+    dailySpinAvailable: true,
+    extraSpinBalance: 0,
+    checkinReward: 1,
     invited: 26,
     verified: 18,
     joined: 21,
@@ -80,6 +87,10 @@ const translations = {
     homeHeroDesc: "Simple Telegram Mini App flow: daily check-in and lucky free spin.",
     statUCoin: "UCoin",
     freeSpinStat: "Free Spins",
+    dailySpinStat: "Daily Free Spin",
+    extraSpinStat: "Extra Spins",
+    dailySpinAvailable: "Available",
+    dailySpinUsed: "Used",
     statTier: "Tier",
     statInvited: "Invited",
     statVerified: "Verified",
@@ -88,6 +99,7 @@ const translations = {
     statRewardsEarned: "UCoin Earned",
     statTotalInvites: "Total Invites",
     spinNow: "Spin Now",
+    buySpin: "Buy 1 Spin - 5 UCoin",
     spinCore: "SPIN",
     spinHint: "Tap the center button to spin.",
     homeSpinTitle: "Lucky Spin",
@@ -178,6 +190,13 @@ const translations = {
     modalSpinTitle: "Spin Result",
     noSpinTitle: "No Spins Left",
     noSpinText: "You have used all free spin chances for now. Please check again later.",
+    buySpinTitle: "Free Spin Purchased",
+    buySpinText: "5 UCoin has been deducted and 1 extra spin has been saved.",
+    notEnoughUcoinTitle: "Not Enough UCoin",
+    openFromTelegramTitle: "Open From Telegram",
+    openFromTelegramText: "Please open this Mini App from the Telegram bot to use your real UW account.",
+    backendErrorTitle: "Mini App Connection",
+    backendErrorText: "Cannot connect to the reward backend. Please try again later.",
     termsText: "1. Referral rewards are counted after a friend completes verification.\n2. One phone number counts once.\n3. UCoin and claims may require admin approval.",
     helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
     tierInfoText: "Bronze member: +1 UCoin daily.\nSilver member: +2 UCoin daily after 20 verified invites.\nGold member: +3 UCoin daily after 50 verified invites.",
@@ -204,6 +223,10 @@ const translations = {
     homeHeroDesc: "Aliran Mini App yang ringkas: daily check-in dan lucky free spin.",
     statUCoin: "UCoin",
     freeSpinStat: "Free Spin",
+    dailySpinStat: "Daily Free Spin",
+    extraSpinStat: "Extra Spin",
+    dailySpinAvailable: "Ada",
+    dailySpinUsed: "Sudah guna",
     statTier: "Tahap",
     statInvited: "Dijemput",
     statVerified: "Disahkan",
@@ -212,6 +235,7 @@ const translations = {
     statRewardsEarned: "UCoin Diperoleh",
     statTotalInvites: "Jumlah Jemputan",
     spinNow: "Spin Sekarang",
+    buySpin: "Beli 1 Spin - 5 UCoin",
     spinCore: "SPIN",
     spinHint: "Tekan butang tengah untuk spin.",
     homeSpinTitle: "Lucky Spin",
@@ -302,6 +326,13 @@ const translations = {
     modalSpinTitle: "Hasil Spin",
     noSpinTitle: "Tiada Spin Lagi",
     noSpinText: "Anda sudah guna semua peluang free spin buat masa ini. Sila semak semula kemudian.",
+    buySpinTitle: "Free Spin Dibeli",
+    buySpinText: "5 UCoin telah ditolak dan 1 extra spin telah disimpan.",
+    notEnoughUcoinTitle: "UCoin Tidak Cukup",
+    openFromTelegramTitle: "Buka Dari Telegram",
+    openFromTelegramText: "Sila buka Mini App ini dari Telegram bot untuk guna akaun UW sebenar anda.",
+    backendErrorTitle: "Sambungan Mini App",
+    backendErrorText: "Tidak dapat sambung ke reward backend. Sila cuba lagi nanti.",
     termsText: "1. Ganjaran referral dikira selepas rakan selesai pengesahan.\n2. Satu nombor telefon dikira sekali.\n3. UCoin dan tuntutan mungkin perlukan kelulusan admin.",
     helpText: "Telegram Support: {telegram}\nWhatsApp: {whatsapp}\nWebsite: {website}",
     tierInfoText: "Ahli Bronze: +1 UCoin sehari.\nAhli Silver: +2 UCoin sehari selepas 20 referral disahkan.\nAhli Gold: +3 UCoin sehari selepas 50 referral disahkan.",
@@ -451,7 +482,12 @@ Object.assign(translations.zh, {
   homeHeroDesc: "简化版 Telegram Mini App：只保留每日签到和免费转盘。",
   statUCoin: "UCoin",
   freeSpinStat: "免费转盘",
+  dailySpinStat: "每日免费转盘",
+  extraSpinStat: "额外转盘",
+  dailySpinAvailable: "可使用",
+  dailySpinUsed: "已使用",
   spinNow: "立即转盘",
+  buySpin: "5 UCoin 买 1 次",
   spinCore: "SPIN",
   spinHint: "点击中间按钮开始转盘。",
   homeSpinTitle: "幸运转盘",
@@ -482,6 +518,13 @@ Object.assign(translations.zh, {
   modalSpinTitle: "转盘结果",
   noSpinTitle: "没有转盘次数",
   noSpinText: "你现在的免费转盘次数已用完，请稍后再查看。",
+  buySpinTitle: "已购买转盘",
+  buySpinText: "已扣除 5 UCoin，并保存 1 次额外转盘。",
+  notEnoughUcoinTitle: "UCoin 不足",
+  openFromTelegramTitle: "请从 Telegram 打开",
+  openFromTelegramText: "请从 Telegram bot 打开这个 Mini App，才能使用你的真实 UW 账户。",
+  backendErrorTitle: "Mini App 连接",
+  backendErrorText: "暂时无法连接奖励后台，请稍后再试。",
   spinsLeft: "剩余 {count} 次",
   spinWinText: "你抽中了：{reward}",
 });
@@ -521,6 +564,107 @@ function syncTelegramUser() {
   state.user.displayName = telegramUser.username
     ? `@${telegramUser.username}`
     : [telegramUser.first_name, telegramUser.last_name].filter(Boolean).join(" ") || state.user.displayName;
+}
+
+function getTelegramInitData() {
+  return tg?.initData || "";
+}
+
+function backendConfigured() {
+  return Boolean(appConfig.apiBaseUrl);
+}
+
+function canUseBackend() {
+  return backendConfigured() && Boolean(getTelegramInitData());
+}
+
+function requireTelegramBackend() {
+  if (canUseBackend()) return true;
+
+  if (backendConfigured()) {
+    openModal(
+      t("openFromTelegramTitle"),
+      t("openFromTelegramTitle"),
+      `<div class="modal-copy">${t("openFromTelegramText")}</div>`,
+      "home",
+    );
+    return false;
+  }
+
+  return false;
+}
+
+async function miniappApi(path, options = {}) {
+  const response = await fetch(`${appConfig.apiBaseUrl}${path}`, {
+    method: options.method || "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Telegram-Init-Data": getTelegramInitData(),
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined,
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload.ok === false) {
+    const error = new Error(payload.message || t("backendErrorText"));
+    error.payload = payload;
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
+function applyServerState(payload) {
+  if (!payload?.user) return;
+  const user = payload.user;
+  state.backendLoaded = true;
+  state.user.telegramId = user.telegram_id || state.user.telegramId;
+  state.user.displayName = user.display_name || state.user.displayName;
+  state.user.firstName = (user.display_name || state.user.firstName || "UW").replace(/^@/, "").slice(0, 1) || "UW";
+  state.user.ucoin = Number(user.ucoin || 0);
+  state.user.spinCount = Number(user.spin_count || 0);
+  state.user.dailySpinAvailable = Boolean(user.daily_spin_available);
+  state.user.extraSpinBalance = Number(user.extra_spin_balance || 0);
+  state.user.canCheckin = Boolean(user.checkin_available);
+  state.user.checkinReward = Number(user.checkin_reward || 1);
+  state.user.lastCheckin = user.last_checkin || "-";
+  appConfig.spinCost = Number(user.spin_cost || appConfig.spinCost || 5);
+  renderDashboard();
+}
+
+async function loadMiniAppState() {
+  if (!canUseBackend()) {
+    renderDashboard();
+    return;
+  }
+
+  try {
+    const payload = await miniappApi("/api/miniapp/me");
+    if (Array.isArray(payload.rewards) && payload.rewards.length === spinRewards.length) {
+      payload.rewards.forEach((reward, index) => {
+        spinRewards[index] = {
+          label: reward.label,
+          shortLabel: reward.short_label || reward.shortLabel || reward.label,
+          type: reward.type,
+          value: Number(reward.value || 0),
+          weight: Number(reward.weight || 0),
+        };
+      });
+      renderSpinLabels();
+    }
+    applyServerState(payload);
+  } catch (error) {
+    showToast(error.payload?.message || t("backendErrorText"));
+  }
+}
+
+function showBackendError(error) {
+  const message = error?.payload?.message || error?.message || t("backendErrorText");
+  openModal(
+    t("backendErrorTitle"),
+    error?.payload?.error === "auth_failed" ? t("openFromTelegramTitle") : t("backendErrorTitle"),
+    `<div class="modal-copy">${message}</div>`,
+    "home",
+  );
 }
 
 function getTierInfo(verified) {
@@ -681,6 +825,8 @@ function renderDashboard() {
     ucoinCheckin: state.user.ucoin,
     spinCountStat: state.user.spinCount,
     spinCountCheckin: state.user.spinCount,
+    dailySpinStatus: state.user.dailySpinAvailable ? t("dailySpinAvailable") : t("dailySpinUsed"),
+    extraSpinHome: state.user.extraSpinBalance,
     tierHome: tierLabel,
     invitedHome: state.user.invited,
     verifiedHome: state.user.verified,
@@ -698,7 +844,7 @@ function renderDashboard() {
     tierProgressText: tier.next,
     tierMultiplier: `x${tier.multiplier}`,
     tierSummaryCheckin: `${tierLabel} x${tier.multiplier}`,
-    checkinPoints: `+${appConfig.dailyCheckinReward} UCoin`,
+    checkinPoints: `+${state.user.checkinReward || appConfig.dailyCheckinReward} UCoin`,
     lastCheckinLabel: state.user.lastCheckin,
     lastCheckinValue: state.user.lastCheckin,
     tierMultiplierSummary: `x${tier.multiplier}`,
@@ -842,10 +988,34 @@ function pickSpinRewardIndex() {
   return spinRewards.length - 1;
 }
 
-function runSpin() {
+async function runSpin() {
   if (state.spinning) return;
 
-  if (state.user.spinCount <= 0) {
+  let serverPayload = null;
+  let rewardIndex = null;
+  let reward = null;
+
+  if (backendConfigured()) {
+    if (!requireTelegramBackend()) return;
+    try {
+      serverPayload = await miniappApi("/api/miniapp/spin/play", { method: "POST" });
+      rewardIndex = Number(serverPayload.result?.index ?? 0);
+      reward = spinRewards[rewardIndex] || {
+        label: serverPayload.result?.label || "Try Again",
+        shortLabel: serverPayload.result?.short_label || serverPayload.result?.label || "Try Again",
+        type: serverPayload.result?.type || "empty",
+        value: Number(serverPayload.result?.value || 0),
+      };
+    } catch (error) {
+      if (error.payload?.user) {
+        applyServerState(error.payload);
+      }
+      showBackendError(error);
+      return;
+    }
+  }
+
+  if (!serverPayload && state.user.spinCount <= 0) {
     openModal(
       t("homeSpinTitle"),
       t("noSpinTitle"),
@@ -855,8 +1025,11 @@ function runSpin() {
     return;
   }
 
-  const rewardIndex = pickSpinRewardIndex();
-  const reward = spinRewards[rewardIndex];
+  if (rewardIndex === null) {
+    rewardIndex = pickSpinRewardIndex();
+    reward = spinRewards[rewardIndex];
+  }
+
   const sectorAngle = 360 / spinRewards.length;
   const stopAngle = 360 - rewardIndex * sectorAngle - sectorAngle / 2;
   const currentMod = state.currentRotation % 360;
@@ -864,7 +1037,14 @@ function runSpin() {
 
   state.spinning = true;
   homeWheelZone?.classList.add("is-spinning");
-  state.user.spinCount -= 1;
+  if (!serverPayload) {
+    if (state.user.dailySpinAvailable) {
+      state.user.dailySpinAvailable = false;
+    } else {
+      state.user.extraSpinBalance = Math.max(0, state.user.extraSpinBalance - 1);
+    }
+    state.user.spinCount -= 1;
+  }
   state.currentRotation = nextRotation;
   renderDashboard();
 
@@ -873,12 +1053,15 @@ function runSpin() {
   }
 
   window.setTimeout(() => {
-    if (reward.type === "ucoin") {
+    if (serverPayload) {
+      applyServerState(serverPayload);
+    } else if (reward.type === "ucoin") {
       state.user.ucoin += reward.value;
       state.user.rewardsEarned += reward.value;
     }
 
-    if (reward.type === "spin") {
+    if (!serverPayload && reward.type === "spin") {
+      state.user.extraSpinBalance += reward.value;
       state.user.spinCount += reward.value;
     }
 
@@ -901,9 +1084,29 @@ function runSpin() {
   }, 4300);
 }
 
-function runDailyCheckin() {
+async function runDailyCheckin() {
+  if (backendConfigured()) {
+    if (!requireTelegramBackend()) return;
+    try {
+      const payload = await miniappApi("/api/miniapp/checkin", { method: "POST" });
+      applyServerState(payload);
+      openModal(
+        t("quickCheckin"),
+        payload.claimed ? t("modalCheckinTitle") : t("alreadyCheckedInTitle"),
+        `<div class="modal-copy">${payload.message || ""}</div>`,
+        "checkin",
+      );
+    } catch (error) {
+      if (error.payload?.user) {
+        applyServerState(error.payload);
+      }
+      showBackendError(error);
+    }
+    return;
+  }
+
   if (state.user.canCheckin) {
-    const points = appConfig.dailyCheckinReward;
+    const points = state.user.checkinReward || appConfig.dailyCheckinReward;
     state.user.canCheckin = false;
     state.user.ucoin += points;
     state.user.rewardsEarned += points;
@@ -923,6 +1126,54 @@ function runDailyCheckin() {
     t("alreadyCheckedInTitle"),
     `<div class="modal-copy">${t("alreadyCheckedInText")}</div>`,
     "checkin",
+  );
+}
+
+async function buySpin() {
+  if (backendConfigured()) {
+    if (!requireTelegramBackend()) return;
+    try {
+      const payload = await miniappApi("/api/miniapp/spin/buy", { method: "POST" });
+      applyServerState(payload);
+      openModal(
+        t("buySpinTitle"),
+        t("buySpinTitle"),
+        `<div class="modal-copy">${payload.message || t("buySpinText")}</div>`,
+        "home",
+      );
+    } catch (error) {
+      if (error.payload?.user) {
+        applyServerState(error.payload);
+      }
+      openModal(
+        t("notEnoughUcoinTitle"),
+        error.payload?.error === "auth_failed" ? t("openFromTelegramTitle") : t("notEnoughUcoinTitle"),
+        `<div class="modal-copy">${error.payload?.message || error.message || t("backendErrorText")}</div>`,
+        "home",
+      );
+    }
+    return;
+  }
+
+  if (state.user.ucoin < appConfig.spinCost) {
+    openModal(
+      t("notEnoughUcoinTitle"),
+      t("notEnoughUcoinTitle"),
+      `<div class="modal-copy">${t("notEnoughUcoinTitle")}</div>`,
+      "home",
+    );
+    return;
+  }
+
+  state.user.ucoin -= appConfig.spinCost;
+  state.user.extraSpinBalance += 1;
+  state.user.spinCount += 1;
+  renderDashboard();
+  openModal(
+    t("buySpinTitle"),
+    t("buySpinTitle"),
+    `<div class="modal-copy">${t("buySpinText")}</div>`,
+    "home",
   );
 }
 
@@ -947,7 +1198,7 @@ actionButtons.forEach((button) => {
     const action = button.dataset.action;
 
     if (action === "daily-checkin") {
-      runDailyCheckin();
+      await runDailyCheckin();
       return;
     }
 
@@ -972,7 +1223,12 @@ actionButtons.forEach((button) => {
     }
 
     if (action === "spin-now") {
-      runSpin();
+      await runSpin();
+      return;
+    }
+
+    if (action === "buy-spin") {
+      await buySpin();
       return;
     }
 
@@ -1002,3 +1258,4 @@ resultModal?.addEventListener("click", (event) => {
 syncTelegramShell();
 syncTelegramUser();
 applyTranslations();
+loadMiniAppState();
