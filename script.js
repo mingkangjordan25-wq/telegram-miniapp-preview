@@ -25,7 +25,11 @@ const appConfig = {
   ultraMallUrl: "https://ultra-mall.atoms.world/",
   dailyCheckinReward: 1,
   spinCost: 5,
-  apiBaseUrl: (pageParams.get("api") || window.UW_MINIAPP_API_BASE || "").replace(/\/$/, ""),
+  apiBaseUrl: (
+    pageParams.get("api") ||
+    window.UW_MINIAPP_API_BASE ||
+    "https://optimistic-nurturing-production-5174.up.railway.app"
+  ).replace(/\/$/, ""),
 };
 
 const state = {
@@ -37,36 +41,28 @@ const state = {
   backendLoaded: false,
   user: {
     telegramId: null,
-    displayName: "@uw_member_demo",
+    displayName: "",
     firstName: "UW",
-    ucoin: 128,
+    ucoin: 0,
     spinCount: 0,
     dailySpinAvailable: false,
     extraSpinBalance: 0,
     checkinReward: 1,
-    invited: 26,
-    verified: 18,
-    joined: 21,
-    rewardsEarned: 46,
-    lastCheckin: "2026-07-08",
-    canCheckin: true,
-    phone: "+60 12-883 7711",
-    phoneVerified: true,
-    phoneVerifiedAt: "2026-07-08 20:00",
+    invited: 0,
+    verified: 0,
+    joined: 0,
+    rewardsEarned: 0,
+    lastCheckin: "-",
+    canCheckin: false,
+    phone: "",
+    phoneVerified: false,
+    phoneVerifiedAt: "-",
   },
 };
 
-const inviteHistory = [
-  { name: "Aina", time: "2026-07-09 10:12", status: "verified" },
-  { name: "Jason", time: "2026-07-09 09:04", status: "verified" },
-  { name: "Siti", time: "2026-07-08 22:40", status: "pending" },
-  { name: "Amir", time: "2026-07-08 18:15", status: "rewardSent" },
-];
+const inviteHistory = [];
 
-const rewardHistory = [
-  { item: "Daily Check-In", amount: "+1 UCoin", time: "2026-07-08 20:00", status: "approved" },
-  { item: "Free Spin", amount: "+5 UCoin", time: "2026-07-08 14:28", status: "approved" },
-];
+const rewardHistory = [];
 
 const spinRewards = [
   { label: "Try Again", shortLabel: "Try Again", type: "empty", weight: 43 },
@@ -190,6 +186,7 @@ const translations = {
     modalSpinTitle: "Spin Result",
     noSpinTitle: "No Spins Left",
     noSpinText: "You have used all free spin chances for now. Please check again later.",
+    loadingText: "...",
     buySpinTitle: "Free Spin Purchased",
     buySpinText: "5 UCoin has been deducted and 1 extra spin has been saved.",
     notEnoughUcoinTitle: "Not Enough UCoin",
@@ -326,6 +323,7 @@ const translations = {
     modalSpinTitle: "Hasil Spin",
     noSpinTitle: "Tiada Spin Lagi",
     noSpinText: "Anda sudah guna semua peluang free spin buat masa ini. Sila semak semula kemudian.",
+    loadingText: "...",
     buySpinTitle: "Free Spin Dibeli",
     buySpinText: "5 UCoin telah ditolak dan 1 extra spin telah disimpan.",
     notEnoughUcoinTitle: "UCoin Tidak Cukup",
@@ -454,6 +452,7 @@ const translations = {
     modalSpinTitle: "抽奖结果",
     noSpinTitle: "没有次数了",
     noSpinText: "邀请更多已验证好友来解锁更多抽奖机会。",
+    loadingText: "...",
     termsText: "1. 好友完成验证后，邀请奖励才会计入。\n2. 同一个手机号只计算一次。\n3. UCoin 与兑换可能需要管理员审核。",
     helpText: "Telegram 客服: {telegram}\nWhatsApp: {whatsapp}\n官网: {website}",
     tierInfoText: "Bronze 会员：每日 +1 UCoin。\nSilver 会员：20 个已验证邀请后每日 +2 UCoin。\nGold 会员：50 个已验证邀请后每日 +3 UCoin。",
@@ -518,6 +517,7 @@ Object.assign(translations.zh, {
   modalSpinTitle: "转盘结果",
   noSpinTitle: "没有转盘次数",
   noSpinText: "你现在的免费转盘次数已用完，请稍后再查看。",
+  loadingText: "...",
   buySpinTitle: "已购买转盘",
   buySpinText: "已扣除 5 UCoin，并保存 1 次额外转盘。",
   notEnoughUcoinTitle: "UCoin 不足",
@@ -578,6 +578,11 @@ function canUseBackend() {
   return backendConfigured() && Boolean(getTelegramInitData());
 }
 
+function backendDisplayValue(value) {
+  if (!backendConfigured()) return value;
+  return state.backendLoaded ? value : t("loadingText");
+}
+
 function requireTelegramBackend() {
   if (canUseBackend()) return true;
 
@@ -635,6 +640,9 @@ function applyServerState(payload) {
 async function loadMiniAppState() {
   if (!canUseBackend()) {
     renderDashboard();
+    if (backendConfigured()) {
+      showToast(t("openFromTelegramText"));
+    }
     return;
   }
 
@@ -818,14 +826,18 @@ function renderInviteList() {
 function renderDashboard() {
   const tier = getTierInfo(state.user.verified);
   const tierLabel = t(`tier${tier.key.charAt(0).toUpperCase()}${tier.key.slice(1)}`);
+  const waitingForBackend = backendConfigured() && !state.backendLoaded;
+  const checkinStatusText = waitingForBackend
+    ? t("loadingText")
+    : state.user.canCheckin ? t("checkinReady") : t("checkinDone");
 
   document.documentElement.lang = state.currentLanguage === "zh" ? "zh-CN" : state.currentLanguage;
 
   const mappings = {
-    ucoinHome: state.user.ucoin,
-    ucoinCheckin: state.user.ucoin,
+    ucoinHome: backendDisplayValue(state.user.ucoin),
+    ucoinCheckin: backendDisplayValue(state.user.ucoin),
     checkinPointsHome: `+${state.user.checkinReward || appConfig.dailyCheckinReward} UCoin`,
-    checkinStatusHome: state.user.canCheckin ? t("checkinReady") : t("checkinDone"),
+    checkinStatusHome: checkinStatusText,
     spinCountStat: state.user.spinCount,
     spinCountCheckin: state.user.spinCount,
     dailySpinStatus: state.user.dailySpinAvailable ? t("dailySpinAvailable") : t("dailySpinUsed"),
@@ -837,8 +849,8 @@ function renderDashboard() {
     joinedCount: state.user.joined,
     verifiedCount: state.user.verified,
     rewardsEarnedCount: state.user.rewardsEarned,
-    walletUcoin: `UCoin ${state.user.ucoin}`,
-    ucoinAccount: state.user.ucoin,
+    walletUcoin: `UCoin ${backendDisplayValue(state.user.ucoin)}`,
+    ucoinAccount: backendDisplayValue(state.user.ucoin),
     accountTierShort: tierLabel,
     totalInvitesAccount: state.user.invited,
     lastCheckinShort: state.user.lastCheckin.slice(5),
@@ -868,12 +880,12 @@ function renderDashboard() {
 
   const checkinStatus = document.getElementById("checkinStatus");
   if (checkinStatus) {
-    checkinStatus.textContent = state.user.canCheckin ? t("checkinReady") : t("checkinDone");
+    checkinStatus.textContent = checkinStatusText;
   }
 
   const checkinStatusSummary = document.getElementById("checkinStatusSummary");
   if (checkinStatusSummary) {
-    checkinStatusSummary.textContent = state.user.canCheckin ? t("checkinReady") : t("checkinDone");
+    checkinStatusSummary.textContent = checkinStatusText;
   }
 
   const phoneVerifiedTag = document.getElementById("phoneVerifiedTag");
