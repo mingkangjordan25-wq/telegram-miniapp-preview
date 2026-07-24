@@ -40,8 +40,8 @@ const state = {
     displayName: "@uw_member_demo",
     firstName: "UW",
     ucoin: 128,
-    spinCount: 1,
-    dailySpinAvailable: true,
+    spinCount: 0,
+    dailySpinAvailable: false,
     extraSpinBalance: 0,
     checkinReward: 1,
     invited: 26,
@@ -82,9 +82,9 @@ const translations = {
   en: {
     topbarEyebrow: "Telegram Mini App",
     topbarTitle: "Ultrawin77 Reward Center",
-    homeChip: "UW check-in and free spin",
-    homeHeroTitle: "Check in daily and spin for UW rewards",
-    homeHeroDesc: "Simple Telegram Mini App flow: daily check-in and lucky free spin.",
+    homeChip: "UW daily check-in",
+    homeHeroTitle: "Check in daily for UW rewards",
+    homeHeroDesc: "Simple Telegram Mini App flow: claim your daily check-in reward.",
     statUCoin: "UCoin",
     freeSpinStat: "Free Spins",
     dailySpinStat: "Daily Free Spin",
@@ -107,7 +107,7 @@ const translations = {
     openCheckin: "Open Check-In",
     inviteFriends: "Invite Friends",
     quickActionsTitle: "Quick Actions",
-    quickActionsHint: "Only the active UW rewards",
+    quickActionsHint: "Active UW reward",
     quickCheckin: "Daily Check-In",
     checkinReady: "Ready now",
     checkinDone: "Claimed",
@@ -218,9 +218,9 @@ const translations = {
   ms: {
     topbarEyebrow: "Telegram Mini App",
     topbarTitle: "Pusat Ganjaran Ultrawin77",
-    homeChip: "Check-in dan free spin UW",
-    homeHeroTitle: "Check-in setiap hari dan spin untuk ganjaran UW",
-    homeHeroDesc: "Aliran Mini App yang ringkas: daily check-in dan lucky free spin.",
+    homeChip: "Daily check-in UW",
+    homeHeroTitle: "Check-in setiap hari untuk ganjaran UW",
+    homeHeroDesc: "Aliran Mini App yang ringkas: claim ganjaran daily check-in anda.",
     statUCoin: "UCoin",
     freeSpinStat: "Free Spin",
     dailySpinStat: "Daily Free Spin",
@@ -243,7 +243,7 @@ const translations = {
     openCheckin: "Buka Check-In",
     inviteFriends: "Jemput Rakan",
     quickActionsTitle: "Tindakan Pantas",
-    quickActionsHint: "Hanya ganjaran UW yang aktif",
+    quickActionsHint: "Ganjaran UW yang aktif",
     quickCheckin: "Daily Check-In",
     checkinReady: "Boleh claim",
     checkinDone: "Sudah claim",
@@ -354,9 +354,9 @@ const translations = {
   zh: {
     topbarEyebrow: "Telegram Mini App",
     topbarTitle: "Ultrawin77 奖励中心",
-    homeChip: "UW 奖励与邀请",
-    homeHeroTitle: "每日签到，邀请已验证好友，持续累积你的 UCoin",
-    homeHeroDesc: "这个预览版对应 UW 的奖励流程：每日签到、会员等级、邀请追踪和 UltraMall 兑换。",
+    homeChip: "UW 每日签到",
+    homeHeroTitle: "每日签到领取 UW 奖励",
+    homeHeroDesc: "Telegram Mini App 目前只开放每日签到奖励。",
     statUCoin: "UCoin",
     statTier: "等级",
     statInvited: "已邀请",
@@ -373,7 +373,7 @@ const translations = {
     openCheckin: "打开签到",
     inviteFriends: "邀请好友",
     quickActionsTitle: "快捷功能",
-    quickActionsHint: "常用入口",
+    quickActionsHint: "当前开放的 UW 奖励",
     quickCheckin: "每日签到",
     checkinReady: "现在可领",
     checkinDone: "已领取",
@@ -477,9 +477,9 @@ const translations = {
 Object.assign(translations.zh, {
   topbarEyebrow: "Telegram Mini App",
   topbarTitle: "Ultrawin77 奖励中心",
-  homeChip: "UW 签到和免费转盘",
-  homeHeroTitle: "每日签到，免费转盘赢 UW 奖励",
-  homeHeroDesc: "简化版 Telegram Mini App：只保留每日签到和免费转盘。",
+  homeChip: "UW 每日签到",
+  homeHeroTitle: "每日签到领取 UW 奖励",
+  homeHeroDesc: "Telegram Mini App 目前只开放每日签到奖励。",
   statUCoin: "UCoin",
   freeSpinStat: "免费转盘",
   dailySpinStat: "每日免费转盘",
@@ -494,7 +494,7 @@ Object.assign(translations.zh, {
   homeSpinDesc: "使用你的免费转盘次数，等待动画显示结果。",
   openCheckin: "打开签到",
   quickActionsTitle: "快捷功能",
-  quickActionsHint: "只保留 UW 当前奖励",
+  quickActionsHint: "当前开放的 UW 奖励",
   quickCheckin: "每日签到",
   checkinReady: "现在可领取",
   checkinDone: "已领取",
@@ -621,9 +621,10 @@ function applyServerState(payload) {
   state.user.displayName = user.display_name || state.user.displayName;
   state.user.firstName = (user.display_name || state.user.firstName || "UW").replace(/^@/, "").slice(0, 1) || "UW";
   state.user.ucoin = Number(user.ucoin || 0);
-  state.user.spinCount = Number(user.spin_count || 0);
-  state.user.dailySpinAvailable = Boolean(user.daily_spin_available);
-  state.user.extraSpinBalance = Number(user.extra_spin_balance || 0);
+  const spinEnabled = user.spin_enabled !== false;
+  state.user.spinCount = spinEnabled ? Number(user.spin_count || 0) : 0;
+  state.user.dailySpinAvailable = spinEnabled ? Boolean(user.daily_spin_available) : false;
+  state.user.extraSpinBalance = spinEnabled ? Number(user.extra_spin_balance || 0) : 0;
   state.user.canCheckin = Boolean(user.checkin_available);
   state.user.checkinReward = Number(user.checkin_reward || 1);
   state.user.lastCheckin = user.last_checkin || "-";
@@ -823,6 +824,8 @@ function renderDashboard() {
   const mappings = {
     ucoinHome: state.user.ucoin,
     ucoinCheckin: state.user.ucoin,
+    checkinPointsHome: `+${state.user.checkinReward || appConfig.dailyCheckinReward} UCoin`,
+    checkinStatusHome: state.user.canCheckin ? t("checkinReady") : t("checkinDone"),
     spinCountStat: state.user.spinCount,
     spinCountCheckin: state.user.spinCount,
     dailySpinStatus: state.user.dailySpinAvailable ? t("dailySpinAvailable") : t("dailySpinUsed"),

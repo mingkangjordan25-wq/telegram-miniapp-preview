@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Ultrawin77 Reward Center</title>
-  <link rel="stylesheet" href="styles.css?v=uw-wheel-labels-1">
+  <link rel="stylesheet" href="styles.css?v=uw-checkin-only-1">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -25,38 +25,12 @@
       <section class="screen is-active" data-screen="home">
         <div class="hero-card compact-hero">
           <div class="hero-copy">
-            <span class="hero-chip" data-i18n="homeChip">UW check-in and free spin</span>
-            <h2 data-i18n="homeHeroTitle">Check in daily and spin for UW rewards</h2>
-            <p data-i18n="homeHeroDesc">Simple Telegram Mini App flow: daily check-in and lucky free spin.</p>
+            <span class="hero-chip" data-i18n="homeChip">UW daily check-in</span>
+            <h2 data-i18n="homeHeroTitle">Check in daily for UW rewards</h2>
+            <p data-i18n="homeHeroDesc">Simple Telegram Mini App flow: claim your daily check-in reward.</p>
           </div>
           <div class="hero-orb"></div>
         </div>
-
-        <section class="panel spin-panel">
-          <div class="panel-head">
-            <h3 data-i18n="homeSpinTitle">Lucky Spin</h3>
-            <span id="spinCountHome">1 spins left</span>
-          </div>
-          <p class="subtle" data-i18n="homeSpinDesc">Use your free spin chance and watch the wheel animation reveal the result.</p>
-
-          <div class="home-wheel-zone" id="homeWheelZone">
-            <div class="wheel-pointer"></div>
-            <div class="wheel" id="homeWheel">
-              <span class="wheel-label" data-spin-label="0">Try Again</span>
-              <span class="wheel-label" data-spin-label="1">Free Spin</span>
-              <span class="wheel-label" data-spin-label="2">+5 UCoin</span>
-              <span class="wheel-label" data-spin-label="3">+10 UCoin</span>
-              <span class="wheel-label" data-spin-label="4">RM5</span>
-              <span class="wheel-label" data-spin-label="5">RM12</span>
-              <span class="wheel-label" data-spin-label="6">RM25</span>
-            </div>
-            <button class="spin-core" id="homeSpinButton" type="button" data-action="spin-now" data-i18n="spinCore">SPIN</button>
-          </div>
-
-          <div class="spin-footer">
-            <span data-i18n="spinHint">Tap the center button to spin.</span>
-          </div>
-        </section>
 
         <div class="stats-grid home-stats">
           <article class="stat-card accent">
@@ -64,22 +38,18 @@
             <strong id="ucoinHome">128</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="freeSpinStat">Free Spins</span>
-            <strong id="spinCountStat">1</strong>
+            <span data-i18n="todayRewardTitle">Today's Reward</span>
+            <strong id="checkinPointsHome">+1 UCoin</strong>
           </article>
           <article class="stat-card">
-            <span data-i18n="dailySpinStat">Daily Free Spin</span>
-            <strong id="dailySpinStatus">Available</strong>
-          </article>
-          <article class="stat-card">
-            <span data-i18n="extraSpinStat">Extra Spins</span>
-            <strong id="extraSpinHome">0</strong>
+            <span data-i18n="checkinPageTitle">Daily Check-In</span>
+            <strong id="checkinStatusHome">Ready now</strong>
           </article>
         </div>
 
         <div class="cta-row">
-          <button class="primary-btn" type="button" data-action="spin-now" data-i18n="spinNow">Spin Now</button>
-          <button class="secondary-btn" type="button" data-action="buy-spin" data-i18n="buySpin">Buy 1 Spin - 5 UCoin</button>
+          <button class="primary-btn" type="button" data-action="daily-checkin" data-i18n="claimCheckin">Claim Check-In</button>
+          <button class="secondary-btn" type="button" data-target="checkin" data-i18n="navCheckin">Check-In</button>
         </div>
 
         <section class="panel quick-panel">
@@ -87,14 +57,10 @@
             <h3 data-i18n="quickActionsTitle">Quick Actions</h3>
             <span data-i18n="quickActionsHint">Only the active UW rewards</span>
           </div>
-          <div class="quick-grid">
+          <div class="quick-grid single">
             <button class="quick-card" type="button" data-target="checkin">
               <strong data-i18n="quickCheckin">Daily Check-In</strong>
               <span id="checkinStatus" data-i18n="checkinReady">Ready now</span>
-            </button>
-            <button class="quick-card" type="button" data-action="spin-now">
-              <strong data-i18n="quickSpin">Free Spin</strong>
-              <span data-i18n="quickSpinDesc">Spin the wheel now</span>
             </button>
           </div>
         </section>
@@ -135,10 +101,6 @@
               <strong data-i18n="statUCoin">UCoin</strong>
               <span id="ucoinCheckin">128</span>
             </div>
-            <div class="summary-row">
-              <strong data-i18n="freeSpinStat">Free Spins</strong>
-              <span id="spinCountCheckin">1</span>
-            </div>
           </div>
         </section>
       </section>
@@ -170,6 +132,6 @@
 
   <div class="toast" id="toast" aria-live="polite" aria-hidden="true"></div>
 
-  <script src="script.js?v=uw-wheel-labels-1"></script>
+  <script src="script.js?v=uw-checkin-only-1"></script>
 </body>
 </html>

@@ -326,6 +326,10 @@ body.modal-open {
   margin-top: 12px;
 }
 
+.quick-grid.single {
+  grid-template-columns: 1fr;
+}
+
 .quick-card {
   padding: 14px;
   text-align: left;
